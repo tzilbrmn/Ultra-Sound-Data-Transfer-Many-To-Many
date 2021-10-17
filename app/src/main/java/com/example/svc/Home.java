@@ -1,0 +1,158 @@
+package com.example.svc;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+
+import Utils.Constants;
+import Utils.utils;
+import models.SVCDB;
+import models.UserDTO;
+import models.VisitCardDAO;
+import models.VisitCardDTO;
+
+@RequiresApi(api = Build.VERSION_CODES.KITKAT)
+public class Home extends AppCompatActivity {
+    /**
+     * Instance variables:
+     * userVisitCards - all the visit cards the user owns.
+     * db - an instance of the SQLite Helper class.
+     * user - The currently logged in user.
+     * visitCardsTable - the table element to view the visit cards in.
+     */
+    private ArrayList<VisitCardDTO> userVisitCards;
+    private UserDTO user;
+    private SVCDB db;
+    private TableLayout visitCardsTable;
+
+    /**
+     * {@inheritDoc}
+     * Initializes the db instance, gets the currently logged in user from the intent <i>Extra</i> dictionary.
+     * gets the visit cards owned by the currently logged in user and populates the table.
+     * @param savedInstanceState {@inheritDoc}
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home);
+        db = new SVCDB(this);
+
+
+        // Get the Intent that started this activity and extract the user.
+        Intent intent = getIntent();
+        user = UserDTO.stringToUser(intent.getStringExtra(Constants.USER));
+        //get the visit cards owned by this user.
+        userVisitCards = VisitCardDAO.getUserVisitCards(user.getEmail(),db);
+        if(userVisitCards == null){
+            new AlertDialog.Builder(this)
+                    .setTitle("An Error!")
+                    .setMessage("An Error Occurred, please try again.")
+                    .setNeutralButton("Close", null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+            return;
+        }
+        // Capture the layout's TextView and set the string as its text
+        TextView textView = findViewById(R.id.welcomeTV);
+        textView.setText("Welcome, " + user.getFull_name());
+
+        //initialize the table layout.
+        visitCardsTable = (TableLayout) findViewById(R.id.visitCardsTable);
+
+        //for each visit card the user owns, initialize a table row with its' data.
+        for(int i=1; i <= userVisitCards.size(); i++){
+            VisitCardDTO vc = userVisitCards.get(i-1);
+            //initialize the row
+            TableRow row = new TableRow(this);
+            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,TableRow.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(8, 2, 16, 2);
+            row.setLayoutParams(lp);
+
+            //set the views:
+
+            //set the full name view
+            TextView full_name = new TextView(this);
+            full_name.setText(vc.getFullName());
+            lp.setMargins(utils.pxFromDp(this,8),0,utils.pxFromDp(this,16),0);
+            row.addView(full_name,lp);
+
+            //set the position view
+            TextView position_title = new TextView(this);
+            position_title.setText(vc.getPosition_title());
+            lp.setMargins(utils.pxFromDp(this,8),0,utils.pxFromDp(this,16),0);
+            row.addView(position_title,lp);
+
+            //set the company view
+            TextView company = new TextView(this);
+            company.setText(vc.getCompany());
+            lp.setMargins(utils.pxFromDp(this,8),0,utils.pxFromDp(this,16),0);
+            row.addView(company,lp);
+
+            //set the "View" button view.
+            Button viewVC = new Button(this);
+            viewVC.setText("View");
+            viewVC.setMinHeight(0);
+            viewVC.setMinimumHeight(0);
+            viewVC.setHeight(utils.pxFromDp(this,40));
+            lp.setMargins(utils.pxFromDp(this,8),0,utils.pxFromDp(this,16),0);
+            Context context = this;
+            viewVC.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context,ViewVisitCard.class);
+                    intent.putExtra(Constants.VC_DATA,vc.toString());
+                    intent.putExtra(Constants.USER,user.toString());
+                    startActivity(intent);
+                }
+            });
+            row.addView(viewVC,lp);
+
+            //add the row to the table
+            visitCardsTable.addView(row,i);
+        }
+
+    }
+
+    /**
+     * the onCLick for the <i>View Profile</i> button.
+     * starts a new activity.
+     * @param v <code>Auto-generated by Android</code>
+     */
+    public void viewProfile(View v){
+        Intent intent = new Intent(this,ViewProfile.class);
+        intent.putExtra(Constants.USER,user.toString());
+        startActivity(intent);
+    }
+    /**
+     * the onCLick for the <i>Logout</i> button.
+     * goes back to MainActivity
+     * @param v <code>Auto-generated by Android</code>
+     */
+    public void logout(View v){
+        Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * the onCLick for the <i>Add Visit Card</i> button.
+     * opens the AddVC activity.
+     * @param v <code>Auto-generated by Android</code>
+     */
+    public void addVC(View v){
+        Intent intent = new Intent(this,AddVC.class);
+        intent.putExtra(Constants.USER,user.toString());
+        startActivity(intent);
+    }
+}

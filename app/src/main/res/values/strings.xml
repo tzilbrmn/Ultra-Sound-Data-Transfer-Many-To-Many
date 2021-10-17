@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">SVC</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="create_new_account">Create New Account</string>
+    <string name="full_name">Full Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="login">Login</string>
+    <string name="signup">SignUp</string>
+    <string name="not_a_user_register">Not a user? Register.</string>
+    <string name="add_visit_card">Add Visit Card</string>
+    <string name="add">Add</string>
+    <string name="mobile">Mobile</string>
+    <string name="company">Company</string>
+    <string name="telephone">Telephone</string>
+    <string name="fax">Fax</string>
+    <string name="position_title">Position title</string>
+    <string name="website">Website</string>
+    <string name="address">Address</string>
+    <string name="test_text">some text to test layout</string>
+    <string name="position">Position</string>
+    <string name="details">Details</string>
+    <string name="viewVCWelcome">View Visit Card</string>
+    <string name="title_activity_edit_v_c">EditVC</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="recieve_via_sound">Recieve via sound</string>
+</resources>
