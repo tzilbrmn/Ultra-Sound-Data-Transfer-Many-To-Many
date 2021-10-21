@@ -39,8 +39,8 @@ public class VisitCardDAO {
         //get the vc from the database
 
         try{
-            System.out.println(vc.getPosition_title());
-            boolean is_exist = db.VCexists(vc.getEmail(),vc.getFirst_name(),vc.getLast_name());
+            System.out.println(vc.getId());
+            boolean is_exist = db.VCexists(vc.toString());
             if(is_exist)
                 return false;
             return db.addVC(vc);

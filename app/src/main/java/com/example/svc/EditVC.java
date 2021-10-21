@@ -191,7 +191,7 @@ public class EditVC extends AppCompatActivity {
         try {
             VisitCardDTO editedVC = new VisitCardDTO.Builder()
                     .setId(vc.getId())
-                    .setEmail(email)
+                    .setId(email)
                     .setOwner(vc.getOwner())
                     .setPrefix(prefix)
                     .setFirst_name(first_name)

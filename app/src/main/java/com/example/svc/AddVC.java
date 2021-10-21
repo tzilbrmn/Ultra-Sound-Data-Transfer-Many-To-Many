@@ -162,19 +162,7 @@ public class AddVC extends AppCompatActivity {
         //try to add the VC, catch possible IllegalArgumentException if any of the mandatory fields is missing. save the VC in the phone book afterwards.
         try {
             VisitCardDTO newVC = new VisitCardDTO.Builder()
-                    .setOwner(user.getEmail())
-                    .setEmail(email)
-                    .setPrefix(prefix)
-                    .setFirst_name(first_name)
-                    .setMiddle_name(middle_name)
-                    .setLast_name(last_name)
-                    .setPosition_title(position_title)
-                    .setCompany(company)
-                    .setAddress(address)
-                    .setTelephone(telephone)
-                    .setFax(fax)
-                    .setMobile(mobile)
-                    .setWebsite(website)
+                    .setOwner(user.getId())
                     .build();
             if(VisitCardDAO.addVC(newVC, db)){
                 //save contact in phone book..

@@ -23,13 +23,11 @@ public class UserDAO {
         try{
             //do input validation!!
             //get the user from the database
-            UserDTO dbUser = db.getUser(user.getEmail());
+            UserDTO dbUser = db.getUser(user.getId());
             //if the user doesn't exist in db return false
             if (dbUser == null)
                 return null;
             //check credentials and send response
-            if (Auth.checkPassword(dbUser.getPassword(), user.getPassword()))
-                return dbUser;
             return null;
         } catch(SQLiteException e){
             return null;
@@ -51,20 +49,5 @@ public class UserDAO {
         }
     }
 
-    /**
-     * Resets the password of the user.
-     * @param user The user info.
-     * @param db The DB instance
-     * @return success/failure of the operation
-     */
-    public static boolean resetPassword (UserDTO user, SVCDB db){
-        try{
-            //do input validation!!
-            //get the vc from the database
-            return db.editPassword(user);
-        } catch(SQLiteException e){
-            return false;
-        }
-    }
 }
 

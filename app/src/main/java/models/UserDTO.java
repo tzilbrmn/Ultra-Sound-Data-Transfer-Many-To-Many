@@ -11,57 +11,29 @@ import security.Auth;
  */
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class UserDTO {
-    private String email;
-    private String password;
-    private String full_name;
+    private String id;
 
 
     private UserDTO(Builder builder){
-        this.email = builder.email;
-        this.password = builder.password;
-        this.full_name = builder.full_name;
+        this.id = builder.id;
     }
 
     /**
      * The Builder class for the <i>Builder</i> design pattern.
      */
     public static class Builder{
-        private String email;
-        private String password;
-        private String full_name;
+        private String id;
 
         /**
          * Email field setter.
-         * @param email The email value to set.
+         * @param id The email value to set.
          * @return Builder object as per the recipe of the <i>Builder</i> design pattern.
          */
-        public Builder setEmail(String email) {
-            this.email = email;
+        public Builder setId(String id) {
+            this.id = id;
             return this;
         }
 
-        /**
-         * Password field setter.
-         * @param password The password value to set
-         * @param hashPassword A flag to indicate whether or not to hash the password upon setting.
-         * @return Builder object as per the recipe of the <i>Builder</i> design pattern.
-         */
-        public Builder setPassword(String password, boolean hashPassword) {
-            if(hashPassword)
-                this.password = Auth.hashPassword(password);
-            else
-                this.password = password;
-            return this;
-        }
-        /**
-         * Full_Name field setter.
-         * @param full_name The full_name value to set.
-         * @return Builder object as per the recipe of the <i>Builder</i> design pattern.
-         */
-        public Builder setFull_name(String full_name) {
-            this.full_name = full_name;
-            return this;
-        }
 
         /**
          * builds the UserDTO object.
@@ -78,25 +50,10 @@ public class UserDTO {
      *
      * @return Email of this object
      */
-    public String getEmail(){
-        return this.email;
+    public String getId(){
+        return this.id;
     }
 
-    /**
-     *
-     * @return Password of this object.
-     */
-    public String getPassword(){
-        return this.password;
-    }
-
-    /**
-     *
-     * @return full_name of this object.
-     */
-    public String getFull_name(){
-        return this.full_name;
-    }
 
     //===================================================================================
 
@@ -107,7 +64,7 @@ public class UserDTO {
      */
     @Override
     public String toString() {
-        return String.format("%s;%s",this.full_name,this.email);
+        return String.format("%s;%s",this.id);
     }
 
 
@@ -119,8 +76,7 @@ public class UserDTO {
     public static UserDTO stringToUser(String user){
         String[] info = user.split(";");
         return new UserDTO.Builder().
-                            setFull_name(info[0]).
-                            setEmail(info[1]).
+                            setId(info[1]).
                             build();
     }
 }

@@ -36,13 +36,6 @@ public class ViewProfile extends AppCompatActivity {
         Intent intent = getIntent();
         //get the user from the intent dictionary
         user = UserDTO.stringToUser(intent.getStringExtra(Constants.USER));
-
-        //set the text of the email and the full_name textFields
-        EditText full_name = (EditText) findViewById(R.id.fullNameinfoTR);
-        full_name.setText(user.getFull_name());
-
-        EditText email = (EditText) findViewById(R.id.emailinfoTR);
-        email.setText(user.getEmail());
     }
 
     /***
