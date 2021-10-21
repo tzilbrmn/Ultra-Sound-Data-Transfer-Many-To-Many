@@ -18,7 +18,7 @@ import models.UserDTO;
 import models.VisitCardDAO;
 import models.VisitCardDTO;
 
-@RequiresApi(api = Build.VERSION_CODES.KITKAT)
+@RequiresApi(api = Build.VERSION_CODES.KITKAT)/*change to oreo version of OS*/
 public class ViewVisitCard extends AppCompatActivity {
     /**
      * Instance variables:
@@ -48,33 +48,12 @@ public class ViewVisitCard extends AppCompatActivity {
 
         //set the text of the textViews from the received visit card:
 
-        //set email textView
-        TextView email = (TextView) findViewById(R.id.emailTextView);
-        email.setText("Email: " + vc.getEmail());
+        //set id textView
+        TextView id = (TextView) findViewById(R.id.idTextView);
+        id.setText("Id: " + vc.getId());
         //set full name textView
-        TextView full_name = (TextView) findViewById(R.id.full_nameTextView);
-        full_name.setText("Full Name: " + vc.getFullName());
-        //set position title textView
-        TextView position_title = (TextView) findViewById(R.id.positionTextView);
-        position_title.setText("Position: " + vc.getPosition_title());
-        //set company textView
-        TextView company = (TextView) findViewById(R.id.companyTextView);
-        company.setText("Company: " + vc.getCompany());
-        //set address textView
-        TextView address = (TextView) findViewById(R.id.addressTextView);
-        address.setText("Address: " + vc.getAddress());
-        //set telephone textView
-        TextView telephone = (TextView) findViewById(R.id.telephoneTextView);
-        telephone.setText("Telephone: " + vc.getTelephone());
-        //set fax textView
-        TextView fax = (TextView) findViewById(R.id.faxTextView);
-        fax.setText("Fax: " + vc.getFax());
-        //set mobile textView
-        TextView mobile = (TextView) findViewById(R.id.mobileTextView);
-        mobile.setText("Mobile: " + vc.getMobile());
-        //set website textView
-        TextView website = (TextView) findViewById(R.id.websiteTextView);
-        website.setText("Website: " + vc.getWebsite());
+        TextView full_encounter_time = (TextView) findViewById(R.id.full_encounter_timeTextView);
+        full_encounter_time.setText("Full encounter time: " + vc.getFullEncounterTime());
     }
 
 

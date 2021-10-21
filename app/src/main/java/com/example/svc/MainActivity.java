@@ -21,7 +21,7 @@ import models.SVCDB;
 import models.UserDAO;
 import models.UserDTO;
 
-@RequiresApi(api = Build.VERSION_CODES.KITKAT)
+@RequiresApi(api = Build.VERSION_CODES.KITKAT)/*change to oreo version of OS*/
 public class MainActivity extends AppCompatActivity {
     /**
      * Instance variables:
@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         UserDTO user;
         if((user = UserDAO.login(new UserDTO.Builder().
                                             setId(id).
+                                            setEncounter(encounter_time).
                                             build(),db)) != null){
             Intent intent = new Intent(this,Home.class);
             intent.putExtra(Constants.USER,user.toString());
