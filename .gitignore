@@ -1,3 +1,7 @@
 
 .idea/.name
 .idea/
+local.properties
+*.lock
+*.bin
+*.properties
