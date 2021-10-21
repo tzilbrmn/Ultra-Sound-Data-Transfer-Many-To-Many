@@ -46,41 +46,7 @@ public class EditVC extends AppCompatActivity {
         user = UserDTO.stringToUser(intent.getStringExtra(Constants.USER));
 
 
-        EditText email = (EditText) findViewById(R.id.eemailET);
-        email.setText(vc.getEmail());
 
-        EditText prefix = (EditText) findViewById(R.id.eprenameTF);
-        prefix.setText(vc.getPrefix());
-
-        EditText first_name = (EditText) findViewById(R.id.efnameTF);
-        first_name.setText(vc.getFirst_name());
-
-        EditText middle_name = (EditText) findViewById(R.id.emnameTF);
-        middle_name.setText(vc.getMiddle_name());
-
-        EditText last_name = (EditText) findViewById(R.id.elnameTF);
-        last_name.setText(vc.getLast_name());
-
-        EditText position_title = (EditText) findViewById(R.id.epositionTF);
-        position_title.setText(vc.getPosition_title());
-
-        EditText company = (EditText) findViewById(R.id.ecompanyTF);
-        company.setText(vc.getCompany());
-
-        EditText address = (EditText) findViewById(R.id.eaddressTF);
-        address.setText(vc.getAddress());
-
-        EditText telephone = (EditText) findViewById(R.id.etelephoneTF);
-        telephone.setText(vc.getTelephone());
-
-        EditText fax = (EditText) findViewById(R.id.efaxTF);
-        fax.setText(vc.getFax());
-
-        EditText mobile = (EditText) findViewById(R.id.emobileTF);
-        mobile.setText(vc.getMobile());
-
-        EditText website = (EditText) findViewById(R.id.ewebsiteTF);
-        website.setText(vc.getWebsite());
 
     }
 
