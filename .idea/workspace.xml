@@ -47,9 +47,13 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="843" y="216" width="585" height="534" key="find.popup" timestamp="1634802723889">
+    <state x="92" y="92" width="1496" height="826" key="DiffContextDialog" timestamp="1634803697395">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state x="843" y="216" width="585" height="534" key="find.popup/0.0.1680.1010@0.0.1680.1010" timestamp="1634802723889" />
+    <state x="92" y="92" width="1496" height="826" key="DiffContextDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1634803697395" />
+    <state x="843" y="216" width="585" height="534" key="find.popup" timestamp="1634803431383">
+      <screen x="0" y="0" width="1680" height="1010" />
+    </state>
+    <state x="843" y="216" width="585" height="534" key="find.popup/0.0.1680.1010@0.0.1680.1010" timestamp="1634803431383" />
   </component>
 </project>
