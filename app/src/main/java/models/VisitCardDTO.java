@@ -7,11 +7,14 @@ import Utils.utils;
  */
 public class VisitCardDTO {
     private int id;
-    private String owner;
+    private String encounter_date;
+    private String encounter_time;
+
 
     private VisitCardDTO(Builder builder){
         this.id = builder.id;
-        this.owner = builder.owner;
+        this.encounter_date = builder.encounter_date;
+        this.encounter_time = builder.encounter_time;
     }
 
     /**
@@ -19,17 +22,39 @@ public class VisitCardDTO {
      */
     public static class Builder{
         private int id;
-        private String owner;
+        private String encounter_date;
+        private String encounter_time;
 
         /**
          * sets the ID of this object.
-         * @param id The ID value to set
+         * @param The ID value to set
          * @return Builder object as per the recipe of the <i>Builder</i> design pattern.
          */
         public Builder setId(int id) {
             this.id = id;
             return this;
         }
+
+        /**
+         * encounter time field setter.
+         * @param The encounter time value to set.
+         * @return Builder object as per the recipe of the <i>Builder</i> design pattern.
+         */
+        public Builder setEncounterTime(String encounter_time) {
+            this.encounter_time = encounter_time;
+            return this;
+        }
+
+        /**
+         *encounter date field setter.
+         * @param id The encounter date value to set.
+         * @return Builder object as per the recipe of the <i>Builder</i> design pattern.
+         */
+        public Builder setEncounterDate(String encounter_date) {
+            this.encounter_date = encounter_date;
+            return this;
+        }
+
 
         /**
          * sets the owner of this object.
@@ -63,12 +88,21 @@ public class VisitCardDTO {
         return id;
     }
 
+
     /**
      *
-     * @return The owner of this object.
+     * @return encounter date of this object
      */
-    public String getOwner() {
-        return owner;
+    public String getEncounterDate(){
+        return this.encounter_date;
+    }
+
+    /**
+     *
+     * @return encounter date of this object
+     */
+    public String getEncounterTime(){
+        return this.encounter_time;
     }
 
     //=======================================================================================
@@ -79,7 +113,7 @@ public class VisitCardDTO {
      */
     @Override
     public String toString() {
-        return String.format("%d;%s",this.id,this.owner);
+        return String.format("%d;%s;%s",this.id,this.encounter_date, this.encounter_time);
     }
 
     /**
@@ -95,10 +129,11 @@ public class VisitCardDTO {
      * @param enc The string representation
      * @return The VisitCardDTO object extracted from the string.
      */
+    //????????????????????????????????????????????????????????????????????
     public static VisitCardDTO stringToVisitCard(String enc){
         String[] info = enc.split(";");
         //fill empty fields in the end with empty strings
-        info = utils.fillArray(info,14);
+        info = utils.fillArray(info,14);//??????????????????????????????????
         return new Builder().
                             setId(Integer.parseInt(info[0])).
                             setOwner(info[1]).

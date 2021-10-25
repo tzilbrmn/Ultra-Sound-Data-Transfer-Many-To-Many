@@ -223,8 +223,8 @@ public class SVCDB extends SQLiteOpenHelper {
 
             visitCards.add(new VisitCardDTO.Builder().
                                             setId(id).
-                                            setOwner(userEmail).
-                                            setId(id).
+                                            setEncounter(encounter_time).
+                                            setEncounterDate(encounter_date).
                                             build()
             );
             cursor.moveToNext();

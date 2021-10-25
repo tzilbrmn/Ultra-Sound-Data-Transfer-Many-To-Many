@@ -30,6 +30,8 @@ import models.VisitCardDAO;
 import models.VisitCardDTO;
 import security.InputValidators;
 
+import java.util.Calendar;
+
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)/*change to oreo version of OS*/
 public class AddVC extends AppCompatActivity {
     /**
@@ -63,7 +65,8 @@ public class AddVC extends AppCompatActivity {
      */
     public void addVc(View v){
         String id = ((EditText) findViewById(R.id.idET)).getText().toString();
-        String encounter_time = ((EditText) findViewById(R.id.encounterTimeET)).getText().toString();
+        String encounter_time = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+        String encounter_date = new SimpleDateFormat("ddMMyyyy", Locale.getDefault()).format(new Date());
 
         if(!id.isEmpty() && !InputValidators.validate(InputValidators.ID,id))
         {
@@ -76,7 +79,7 @@ public class AddVC extends AppCompatActivity {
             return;
         }
 
-        if(!encounter_time.isEmpty() && !InputValidators.validate(InputValidators.ENCOUNTER,encounter_time))
+        if(!encounter_time.isEmpty() && !InputValidators.validate(InputValidators.ENCOUNTER_TIME,encounter_time))
         {
             new AlertDialog.Builder(this)
                     .setTitle("Invalid input")
@@ -86,11 +89,23 @@ public class AddVC extends AppCompatActivity {
                     .show();
             return;
         }
+
+        if(!encounter_date.isEmpty() && !InputValidators.validate(InputValidators.ENCOUNTER_DATE,encounter_date))
+        {
+            new AlertDialog.Builder(this)
+                    .setTitle("Invalid input")
+                    .setMessage("Encounter date must contain only a date structure")
+                    .setNeutralButton("Close", null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+            return;
+        }
         //try to add the VC, catch possible IllegalArgumentException if any of the mandatory fields is missing. save the VC in the phone book afterwards.
         try {
             VisitCardDTO newVC = new VisitCardDTO.Builder()
                     .setId(id)
-                    .setEncounter(encounter_time);
+                    .setEncounterTime(encounter_time)
+                    .setEncounterDate(encounter_date);
             if(VisitCardDAO.addVC(newVC, db)){
                 //save contact in phone book..
                 saveInPhoneBook(newVC);
