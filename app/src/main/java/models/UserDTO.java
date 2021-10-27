@@ -62,7 +62,7 @@ public class UserDTO {
      */
     @Override
     public String toString() {
-        return String.format("%s;%s",this.id);
+        return String.format("%s",this.id);
     }
 
     /**

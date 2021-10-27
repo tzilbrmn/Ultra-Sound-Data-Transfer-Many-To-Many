@@ -89,11 +89,8 @@ public class ViewVisitCard extends AppCompatActivity {
     public void Send(View v){
         //if algorithm is Smaz
         Smaz smaz = new Smaz();
-        byte[] compressedVC = smaz.compress(vc.prepareForCompression());
-        String binaryRep = Utils.utils.byteArrayToBinary(compressedVC);
+        String binaryRep = Utils.utils.strToBinary(vc.getId());
         //if algorithm is LZString
-//        String compressedVC = Utils.LZString.compress(vc.toString());
-//        String binaryRep = Utils.utils.strToBinary(compressedVC);
 
         if (!binaryRep.isEmpty() && !binaryRep.equals(" ")) {
             Sender cSender = new Sender();

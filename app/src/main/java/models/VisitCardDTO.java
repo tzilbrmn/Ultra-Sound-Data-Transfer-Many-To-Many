@@ -7,23 +7,23 @@ import Utils.utils;
  */
 public class VisitCardDTO {
     private int id;
-    private String encounter_date;
-    private String encounter_time;
+    private String encounterDate;
+    private String encounterTime;
 
 
     private VisitCardDTO(Builder builder){
         this.id = builder.id;
-        this.encounter_date = builder.encounter_date;
-        this.encounter_time = builder.encounter_time;
+        this.encounterDate = builder.encounterDate;
+        this.encounterTime = builder.encounterTime;
     }
 
     /**
      * The Builder class for the <i>Builder</i> design pattern.
      */
     public static class Builder{
-        private int id;
-        private String encounter_date;
-        private String encounter_time;
+        private int id; //The id of the other user- what was accepted during transfer.
+        private String encounterDate;
+        private String encounterTime;
 
         /**
          * sets the ID of this object.
@@ -40,8 +40,8 @@ public class VisitCardDTO {
          * @param The encounter time value to set.
          * @return Builder object as per the recipe of the <i>Builder</i> design pattern.
          */
-        public Builder setEncounterTime(String encounter_time) {
-            this.encounter_time = encounter_time;
+        public Builder setEncounterTime(String encounterTime) {
+            this.encounterTime = encounterTime;
             return this;
         }
 
@@ -50,21 +50,8 @@ public class VisitCardDTO {
          * @param id The encounter date value to set.
          * @return Builder object as per the recipe of the <i>Builder</i> design pattern.
          */
-        public Builder setEncounterDate(String encounter_date) {
-            this.encounter_date = encounter_date;
-            return this;
-        }
-
-
-        /**
-         * sets the owner of this object.
-         * @param owner The owner value to set.
-         * @return Builder object as per the recipe of the <i>Builder</i> design pattern.
-         * @throws IllegalArgumentException thrown if the argument is an empty string.
-         */
-        public Builder setOwner(String owner) throws IllegalArgumentException {
-            if(owner.isEmpty()) throw new IllegalArgumentException("Visit Card must have owner");
-            this.owner = owner;
+        public Builder setEncounterDate(String encounterDate) {
+            this.encounterDate = encounterDate;
             return this;
         }
 
@@ -88,13 +75,12 @@ public class VisitCardDTO {
         return id;
     }
 
-
     /**
      *
      * @return encounter date of this object
      */
     public String getEncounterDate(){
-        return this.encounter_date;
+        return this.encounterDate;
     }
 
     /**
@@ -102,7 +88,7 @@ public class VisitCardDTO {
      * @return encounter date of this object
      */
     public String getEncounterTime(){
-        return this.encounter_time;
+        return this.encounterTime;
     }
 
     //=======================================================================================
@@ -113,15 +99,7 @@ public class VisitCardDTO {
      */
     @Override
     public String toString() {
-        return String.format("%d;%s;%s",this.id,this.encounter_date, this.encounter_time);
-    }
-
-    /**
-     * encodes this object to a string to prepare it for transmission over sound
-     * @return A string encoding ready to be transmitted over sound.
-     */
-    public String prepareForCompression(){
-        return String.format("%s;%s;",this.id);
+        return String.format("%d;%s;%s",this.id,this.encounterDate, this.encounterTime);
     }
 
     /**
@@ -129,14 +107,14 @@ public class VisitCardDTO {
      * @param enc The string representation
      * @return The VisitCardDTO object extracted from the string.
      */
-    //????????????????????????????????????????????????????????????????????
     public static VisitCardDTO stringToVisitCard(String enc){
         String[] info = enc.split(";");
         //fill empty fields in the end with empty strings
-        info = utils.fillArray(info,14);//??????????????????????????????????
+        info = utils.fillArray(info,3);
         return new Builder().
                             setId(Integer.parseInt(info[0])).
-                            setOwner(info[1]).
+                            setEncounterDate(info[1]).
+                            setEncounterTime(info[2]).
                             build();
     }
 
@@ -148,7 +126,7 @@ public class VisitCardDTO {
     public static VisitCardDTO receiveVisitCard(String enc) throws IndexOutOfBoundsException,IllegalArgumentException{
         String[] info = enc.split(";");
         //fill empty fields in the end with empty strings
-        info = utils.fillArray(info,12);
+        info = utils.fillArray(info,1);
         return new Builder().
                 setId(Integer.parseInt(info[0])).
                 build();

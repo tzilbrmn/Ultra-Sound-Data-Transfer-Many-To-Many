@@ -38,7 +38,8 @@ public class VisitCardDAO {
         //do input validation!!
         //get the vc from the database
 
-        try{
+// Add here the time calculation- Ariela
+       /* try{
             System.out.println(vc.getId());
             boolean is_exist = db.VCexists(vc.toString());
             if(is_exist)
@@ -46,7 +47,8 @@ public class VisitCardDAO {
             return db.addVC(vc);
         } catch (SQLiteException e){
             return false;
-        }
+        }   */
+        return true; //change later- Ariela
     }
 
     /**
@@ -54,7 +56,7 @@ public class VisitCardDAO {
      * @param vc The changes to apply to the visit card.
      * @param db The DB instance.
      * @return success/failure of the operation
-     */
+     *
     public static boolean editVC (VisitCardDTO vc, SVCDB db){
         //do input validation!!
         //get the vc from the database
@@ -64,6 +66,7 @@ public class VisitCardDAO {
             return false;
         }
     }
+*/
 
     /**
      * Deletes a visit card from the DB.

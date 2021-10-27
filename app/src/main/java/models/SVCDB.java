@@ -19,20 +19,18 @@ import java.util.ArrayList;
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class SVCDB extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2;
-    private static final String DATABASE_NAME = "SVCDB.db";
-    //Constants for the User table
-    private static final String USER_TABLE_NAME = "user";
-    private static final String USER_COLUMN_ID = "Id"; //this is the PK
+    private static final int DATABASE_VERSION = 2; //Check what does it mean- Ariela
+    private static final String DATABASE_NAME = "SVCDB.db"; //Change later - Ariela
 
     //Constants for the VisitCard table
     //TAL - decide what to do
-    private static final String VC_TABLE_NAME = "visit_card";
+    private static final String VC_TABLE_NAME = "encounterLog";
+    private static final String VC_COLUMN_ENCOUNTER_ID = "encounterId";
     private static final String VC_COLUMN_ID = "id"; //this is the PK
-    private static final String VC_COLUMN_OWNER = "owner";
-    private static final String VC_COLUMN_EMAIL = "email";
-    private static final String VC_COLUMN_PREFIX = "prefix";
-
+    private static final String VC_COLUMN_START_DATE = "startDate";
+    private static final String VC_COLUMN_END_DATE = "endDate";
+    private static final String VC_COLUMN_START_TIME = "startTime";
+    private static final String VC_COLUMN_END_TIME = "endTime";
 
     /**
      *
@@ -51,19 +49,13 @@ public class SVCDB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // TODO Auto-generated method stub
         db.execSQL(
-                "CREATE TABLE `user` (`email` VARCHAR(255) PRIMARY KEY, `password` VARCHAR(255) NOT NULL, `full_name` VARCHAR(255));"
-        );
-        db.execSQL(
-                "CREATE TABLE `visit_card` (" +
-                        "  `id` INTEGER  PRIMARY KEY AUTOINCREMENT, " +
-                        "  `owner` VARCHAR(255), " +
-                        "  `Id` VARCHAR(255), " +
-                        "  UNIQUE(`Id`), " +
-                        "  CONSTRAINT `owner` " +
-                        "    FOREIGN KEY (`owner`) " +
-                        "    REFERENCES `user` (`Id`) " +
-                        "    ON DELETE CASCADE " +
-                        "    ON UPDATE CASCADE);"
+                "CREATE TABLE `encounterLog` (" +
+                        "   'encounterId' int NOT NULL AUTO_INCREMENT, " +
+                        "  `id` VARCHAR(255)  PRIMARY KEY, " +
+                        "  `startDate` VARCHAR(255), " +
+                        "  `endDate` VARCHAR(255), " +
+                        "  `startTime` VARCHAR(255), " +
+                        "  `endTime` VARCHAR(255) );"
         );
     }
 
@@ -76,8 +68,7 @@ public class SVCDB extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // TODO Auto-generated method stub
-        db.execSQL("DROP TABLE IF EXISTS user");
-        db.execSQL("DROP TABLE IF EXISTS visit_card");
+        db.execSQL("DROP TABLE IF EXISTS encounterLog");
         onCreate(db);
     }
 
@@ -86,29 +77,13 @@ public class SVCDB extends SQLiteOpenHelper {
 
     //user related methods
 
-    /**
-     * gets a user from the DB corresponding to the given email (PK)
-     * @param email The email of the user to fetch
-     * @return The user object retrieved (null if not found)
-     */
-    public UserDTO getUser(String email) throws SQLiteException{
-        SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT * FROM user WHERE email = ?";
-        Cursor cursor = db.rawQuery(sql, new String[] {email});
-        if(cursor.moveToFirst()){
-            String userId = cursor.getString(cursor.getColumnIndex(USER_COLUMN_ID)); //TAL - get from phone
-            return new UserDTO.Builder()
-                    .setId(userId)
-                    .build();
-        }
-        return null;
-    }
 
     /**
      * Adds a user to the DB.
      * @param user The user object containing the data to be added.
      * @return success/failure of the operation.
      */
+    //DELETE?? - Ariela (a structure for adding new entity to a table)
     public boolean addUser(UserDTO user) throws SQLiteException{
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -125,15 +100,16 @@ public class SVCDB extends SQLiteOpenHelper {
 
     public VisitCardDTO getVC(int id) throws SQLiteException{
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT * FROM visit_card WHERE id = ?";
+        String sql = "SELECT * FROM encounterLog WHERE id = ?";
         Cursor cursor = db.rawQuery(sql, new String[] { Integer.toString(id) });
         if(cursor.moveToFirst()){
             int vc_id = cursor.getInt(cursor.getColumnIndex(VC_COLUMN_ID));
-            String owner = cursor.getString(cursor.getColumnIndex(VC_COLUMN_OWNER));
+            String endDate = cursor.getString(cursor.getColumnIndex(VC_COLUMN_END_DATE));
+            String endTime = cursor.getString(cursor.getColumnIndex(VC_COLUMN_END_TIME));
             return new VisitCardDTO.Builder().
                     setId(vc_id).
-                    setOwner(owner).
-                    setId(id).
+                    setEndDate(endDate).
+                    setEndTime(endTime).
                     build();
         }
         return null;
@@ -145,14 +121,10 @@ public class SVCDB extends SQLiteOpenHelper {
      */
     public boolean VCexists(String id) throws SQLiteException{
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT * FROM visit_card WHERE email = ? AND first_name = ? AND last_name = ? ";
+        String sql = "SELECT endDate, endTime FROM encounterLog WHERE id = ? AND MAX(encounterId)";
         Cursor cursor = db.rawQuery(sql, new String[] { id });
-
-        if(cursor.moveToFirst()){
-            String prefix = cursor.getString(cursor.getColumnIndex(VC_COLUMN_PREFIX));
-            System.out.println(prefix);
-            return true;
-        }
+        //Chack if cursor is not empty -Ariela ???????????????????????????????????
+        //else:
        return false;
     }
 
@@ -165,7 +137,7 @@ public class SVCDB extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(VC_COLUMN_OWNER, vc.getOwner());
+        contentValues.put(VC_COLUMN_ID, vc.getId());
         long insert_result = db.insert(VC_TABLE_NAME, null, contentValues);
         return insert_result != -1;
     }
@@ -176,9 +148,10 @@ public class SVCDB extends SQLiteOpenHelper {
      * @return success/failure of the operation.
      */
     public boolean editVC(VisitCardDTO vc) throws SQLiteException {
+        //Change according to our project- Ariela
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(VC_COLUMN_OWNER, vc.getOwner());
+        contentValues.put(VC_COLUMN_ID, vc.getId());
 
         long update_result= db.update(VC_TABLE_NAME, contentValues,"id = ?", new String[] { Integer.toString(vc.getId()) });
         System.out.println("HI " + update_result);
@@ -207,17 +180,18 @@ public class SVCDB extends SQLiteOpenHelper {
      * @param userEmail The email of the user owning the visit cards.
      * @return The visit cards owned by the user (empty list if user owns none).
      */
-    public ArrayList<VisitCardDTO> getUserVisitCards(String userEmail) throws SQLiteException{
+    //DELETE???- Ariela
+    public ArrayList<VisitCardDTO> getUserVisitCards(String id) throws SQLiteException{
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT * FROM visit_card WHERE owner = ?";
-        Cursor cursor = db.rawQuery(sql, new String[] { userEmail });
+        String sql = "SELECT * FROM encounterLog WHERE id = ?";
+        Cursor cursor = db.rawQuery(sql, new String[] { id });
         ArrayList<VisitCardDTO> visitCards = new ArrayList<>();
         cursor.moveToFirst();
 
         while(cursor.isAfterLast() == false){
-            int id = cursor.getInt(cursor.getColumnIndex(VC_COLUMN_ID));
+            int id = cursor.getInt(cursor.getColumnIndex(VC_COLUMN_ENCOUNTER_ID));
             System.out.println(id);
-            String email = cursor.getString(cursor.getColumnIndex(VC_COLUMN_EMAIL));
+            String id = cursor.getString(cursor.getColumnIndex(VC_COLUMN_ID));
 
 
 
