@@ -7,23 +7,27 @@ import Utils.utils;
  */
 public class VisitCardDTO {
     private int id;
-    private String owner;
+    private String encounterDate;
+    private String encounterTime;
+
 
     private VisitCardDTO(Builder builder){
         this.id = builder.id;
-        this.owner = builder.owner;
+        this.encounterDate = builder.encounterDate;
+        this.encounterTime = builder.encounterTime;
     }
 
     /**
      * The Builder class for the <i>Builder</i> design pattern.
      */
     public static class Builder{
-        private int id;
-        private String owner;
+        private int id; //The id of the other user- what was accepted during transfer.
+        private String encounterDate;
+        private String encounterTime;
 
         /**
          * sets the ID of this object.
-         * @param id The ID value to set
+         * @param The ID value to set
          * @return Builder object as per the recipe of the <i>Builder</i> design pattern.
          */
         public Builder setId(int id) {
@@ -32,14 +36,22 @@ public class VisitCardDTO {
         }
 
         /**
-         * sets the owner of this object.
-         * @param owner The owner value to set.
+         * encounter time field setter.
+         * @param The encounter time value to set.
          * @return Builder object as per the recipe of the <i>Builder</i> design pattern.
-         * @throws IllegalArgumentException thrown if the argument is an empty string.
          */
-        public Builder setOwner(String owner) throws IllegalArgumentException {
-            if(owner.isEmpty()) throw new IllegalArgumentException("Visit Card must have owner");
-            this.owner = owner;
+        public Builder setEncounterTime(String encounterTime) {
+            this.encounterTime = encounterTime;
+            return this;
+        }
+
+        /**
+         *encounter date field setter.
+         * @param id The encounter date value to set.
+         * @return Builder object as per the recipe of the <i>Builder</i> design pattern.
+         */
+        public Builder setEncounterDate(String encounterDate) {
+            this.encounterDate = encounterDate;
             return this;
         }
 
@@ -65,10 +77,18 @@ public class VisitCardDTO {
 
     /**
      *
-     * @return The owner of this object.
+     * @return encounter date of this object
      */
-    public String getOwner() {
-        return owner;
+    public String getEncounterDate(){
+        return this.encounterDate;
+    }
+
+    /**
+     *
+     * @return encounter date of this object
+     */
+    public String getEncounterTime(){
+        return this.encounterTime;
     }
 
     //=======================================================================================
@@ -79,15 +99,7 @@ public class VisitCardDTO {
      */
     @Override
     public String toString() {
-        return String.format("%d;%s",this.id,this.owner);
-    }
-
-    /**
-     * encodes this object to a string to prepare it for transmission over sound
-     * @return A string encoding ready to be transmitted over sound.
-     */
-    public String prepareForCompression(){
-        return String.format("%s;%s;",this.id);
+        return String.format("%d;%s;%s",this.id,this.encounterDate, this.encounterTime);
     }
 
     /**
@@ -98,10 +110,11 @@ public class VisitCardDTO {
     public static VisitCardDTO stringToVisitCard(String enc){
         String[] info = enc.split(";");
         //fill empty fields in the end with empty strings
-        info = utils.fillArray(info,14);
+        info = utils.fillArray(info,3);
         return new Builder().
                             setId(Integer.parseInt(info[0])).
-                            setOwner(info[1]).
+                            setEncounterDate(info[1]).
+                            setEncounterTime(info[2]).
                             build();
     }
 
@@ -113,7 +126,7 @@ public class VisitCardDTO {
     public static VisitCardDTO receiveVisitCard(String enc) throws IndexOutOfBoundsException,IllegalArgumentException{
         String[] info = enc.split(";");
         //fill empty fields in the end with empty strings
-        info = utils.fillArray(info,12);
+        info = utils.fillArray(info,1);
         return new Builder().
                 setId(Integer.parseInt(info[0])).
                 build();

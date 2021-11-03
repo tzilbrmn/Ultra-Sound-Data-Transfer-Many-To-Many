@@ -25,6 +25,7 @@ public class SignUp extends AppCompatActivity {
      */
     private SVCDB db;
     String id = "054";
+    String encounter_time = "0";//change in the process.
 
     /**
      * {@inheritDoc}

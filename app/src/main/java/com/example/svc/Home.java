@@ -23,7 +23,7 @@ import models.UserDTO;
 import models.VisitCardDAO;
 import models.VisitCardDTO;
 
-@RequiresApi(api = Build.VERSION_CODES.KITKAT)
+@RequiresApi(api = Build.VERSION_CODES.KITKAT)/*change to oreo version of OS*/
 public class Home extends AppCompatActivity {
     /**
      * Instance variables:
@@ -82,23 +82,17 @@ public class Home extends AppCompatActivity {
 
             //set the views:
 
-            //set the full name view
+            //set the full id view
             TextView full_name = new TextView(this);
-            full_name.setText(vc.getFullName());
+            full_name.setText(vc.getId());
             lp.setMargins(utils.pxFromDp(this,8),0,utils.pxFromDp(this,16),0);
             row.addView(full_name,lp);
 
-            //set the position view
-            TextView position_title = new TextView(this);
-            position_title.setText(vc.getPosition_title());
+            //set the encounter time view
+            TextView encounterTime = new TextView(this);
+            encounterTime.setText(vc.getEncounterTime());
             lp.setMargins(utils.pxFromDp(this,8),0,utils.pxFromDp(this,16),0);
-            row.addView(position_title,lp);
-
-            //set the company view
-            TextView company = new TextView(this);
-            company.setText(vc.getCompany());
-            lp.setMargins(utils.pxFromDp(this,8),0,utils.pxFromDp(this,16),0);
-            row.addView(company,lp);
+            row.addView(encounterTime,lp);
 
             //set the "View" button view.
             Button viewVC = new Button(this);

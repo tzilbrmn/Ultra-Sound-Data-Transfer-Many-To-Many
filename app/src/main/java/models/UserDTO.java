@@ -25,15 +25,14 @@ public class UserDTO {
         private String id;
 
         /**
-         * Email field setter.
-         * @param id The email value to set.
+         * id field setter.
+         * @param The id value to set.
          * @return Builder object as per the recipe of the <i>Builder</i> design pattern.
          */
         public Builder setId(String id) {
             this.id = id;
             return this;
         }
-
 
         /**
          * builds the UserDTO object.
@@ -48,7 +47,7 @@ public class UserDTO {
 
     /**
      *
-     * @return Email of this object
+     * @return id of this object
      */
     public String getId(){
         return this.id;
@@ -57,16 +56,14 @@ public class UserDTO {
 
     //===================================================================================
 
-
     /**
      *
      * @return A String representation of this object
      */
     @Override
     public String toString() {
-        return String.format("%s;%s",this.id);
+        return String.format("%s",this.id);
     }
-
 
     /**
      * converts a string to a UserDTO object.
