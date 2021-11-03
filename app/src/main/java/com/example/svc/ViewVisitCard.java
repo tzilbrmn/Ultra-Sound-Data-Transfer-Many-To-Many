@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,10 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import SenderPackage.Sender;
 import Utils.Constants;
 import Utils.Smaz;
+import models.Encounter;
 import models.SVCDB;
-import models.UserDTO;
-import models.VisitCardDAO;
-import models.VisitCardDTO;
+import models.User;
 
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)/*change to oreo version of OS*/
 public class ViewVisitCard extends AppCompatActivity {
@@ -27,8 +25,8 @@ public class ViewVisitCard extends AppCompatActivity {
      * vc - the visit card to view.
      */
     private SVCDB db;
-    private VisitCardDTO vc;
-    private UserDTO user;
+    private Encounter vc;
+    private User user;
 
     /**
      * {@inheritDoc}
@@ -43,17 +41,8 @@ public class ViewVisitCard extends AppCompatActivity {
         db = new SVCDB(this);
         //get the data from the intent dictionary
         Intent intent = getIntent();
-        vc = VisitCardDTO.stringToVisitCard(intent.getStringExtra(Constants.VC_DATA));
-        user = UserDTO.stringToUser(intent.getStringExtra(Constants.USER));
+        user = new User(intent.getStringExtra(Constants.USER));
 
-        //set the text of the textViews from the received visit card:
-
-        //set id textView
-        TextView id = (TextView) findViewById(R.id.idTextView);
-        id.setText("Id: " + vc.getId());
-        //set full name textView
-        TextView full_encounter_time = (TextView) findViewById(R.id.full_encounter_timeTextView);
-        full_encounter_time.setText("Full encounter time: " + vc.getFullEncounterTime());
     }
 
 
@@ -64,7 +53,7 @@ public class ViewVisitCard extends AppCompatActivity {
      */
     public void Delete(View v){
         //TODO: delete from phone book (if possible)
-        if(VisitCardDAO.deleteVC( vc.getId(),db)){
+        if(Encounter.deleteVC( vc.getId(),db)){
             Intent intent = new Intent(this,Home.class);
             //putExtra
             intent.putExtra(Constants.USER,user.toString());

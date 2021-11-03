@@ -19,18 +19,18 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import ReceiverPackage.Receiver;
 import Utils.Constants;
 import Utils.Smaz;
+import models.Encounter;
 import models.SVCDB;
-import models.UserDTO;
-import models.VisitCardDAO;
-import models.VisitCardDTO;
-import security.InputValidators;
+import models.User;
 
-import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)/*change to oreo version of OS*/
 public class AddVC extends AppCompatActivity {
@@ -40,7 +40,7 @@ public class AddVC extends AppCompatActivity {
      * user - The currently logged in user.
      */
     private SVCDB db;
-    private UserDTO user;
+    private User user;
 
     /**
      * {@inheritDoc}
@@ -54,7 +54,7 @@ public class AddVC extends AppCompatActivity {
         db = new SVCDB(this);
         //get the user from intent
         Intent intent = getIntent();
-        user = UserDTO.stringToUser(intent.getStringExtra(Constants.USER));
+        user = new User(intent.getStringExtra(Constants.USER));
 
     }
 
@@ -71,11 +71,8 @@ public class AddVC extends AppCompatActivity {
 
         //try to add the VC, catch possible IllegalArgumentException if any of the mandatory fields is missing. save the VC in the phone book afterwards.
         try {
-            VisitCardDTO newVC = new VisitCardDTO.Builder()
-                    .setId(id)
-                    .setEncounterTime(encounterTime)
-                    .setEncounterDate(encounterDate);
-            if(VisitCardDAO.addVC(newVC, db)){
+            Encounter newVC = new Encounter(id, encounterDate, encounterTime);
+            if(Encounter.addVC(newVC, db)){
                 //save contact in phone book..
                 saveInPhoneBook(newVC);
                 Intent intent = new Intent(this,Home.class);
@@ -146,7 +143,7 @@ public class AddVC extends AppCompatActivity {
             //do whatever...
             //fill in the text fields...
             //new AlertDialog.Builder(this).setTitle("Received String").setMessage(decompressed).setNeutralButton("OK",null).show();
-            VisitCardDTO receivedVC = VisitCardDTO.receiveVisitCard(decompressed);
+            Encounter receivedVC = Encounter.receiveVisitCard(decompressed);
             //TODO Rani: do the same for the 4 name TF's after you add them..
 
             ((EditText) findViewById(R.id.IdlET)).setText(receivedVC.getId());
@@ -189,7 +186,7 @@ public class AddVC extends AppCompatActivity {
      * @param vc the visit card to add
      */
     //Change name to encounter log - Ariela
-    private void saveInPhoneBook(VisitCardDTO vc){
+    private void saveInPhoneBook(Encounter vc){
         //initialize the contact first.
         ArrayList<ContentProviderOperation> contact = new ArrayList<ContentProviderOperation>();
         contact.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)

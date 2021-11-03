@@ -5,17 +5,12 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.textfield.TextInputEditText;
-
 import models.SVCDB;
-import models.UserDAO;
-import models.UserDTO;
-import security.InputValidators;
+import models.User;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class SignUp extends AppCompatActivity {
@@ -47,33 +42,8 @@ public class SignUp extends AppCompatActivity {
     public void signUp(View v){
         String id = "054"; // TAL - need to get from phone
 
-        //validate input
-        //---------------------------------------------------------------------
+        //Sign up to the cloud???
 
-        if(id.isEmpty()){
-            new AlertDialog.Builder(this)
-                    .setTitle("Invalid input")
-                    .setMessage("One or more of the fields is missing")
-                    .setNeutralButton("Close", null)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-            return;
-        }
 
-        //----------------------------------------------------------------------
-        //save the newly created use in the DB
-
-        if(UserDAO.signUp(new UserDTO.Builder().
-            setId(id).build(),db)){ //TAL - to fix
-            Intent intent = new Intent(this,MainActivity.class);
-            startActivity(intent);
-        }else{
-            new AlertDialog.Builder(this)
-                    .setTitle("You already have an account!")
-                    .setMessage("Please go to the login page and login!")
-                    .setNeutralButton("Close", null)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-        }
     }
 }

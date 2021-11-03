@@ -84,12 +84,12 @@ public class SVCDB extends SQLiteOpenHelper {
      * @return success/failure of the operation.
      */
     //DELETE?? - Ariela (a structure for adding new entity to a table)
-    public boolean addUser(UserDTO user) throws SQLiteException{
+    public boolean addUser(User user) throws SQLiteException{
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(USER_COLUMN_ID, user.getId());
+        contentValues.put(VC_COLUMN_ID, user.getId());
 
-        long insert_result = db.insert(USER_TABLE_NAME, null, contentValues);
+        long insert_result = db.insert(VC_TABLE_NAME, null, contentValues);
         return insert_result != -1;
     }
 
@@ -98,19 +98,17 @@ public class SVCDB extends SQLiteOpenHelper {
 
     //Visit card related methods
 
-    public VisitCardDTO getVC(int id) throws SQLiteException{
+    public Encounter getVC(int id) throws SQLiteException{
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM encounterLog WHERE id = ?";
         Cursor cursor = db.rawQuery(sql, new String[] { Integer.toString(id) });
         if(cursor.moveToFirst()){
-            int vc_id = cursor.getInt(cursor.getColumnIndex(VC_COLUMN_ID));
+            String vc_id = cursor.getString(cursor.getColumnIndex(VC_COLUMN_ID));
+            String startDate = cursor.getString(cursor.getColumnIndex(VC_COLUMN_START_DATE));
+            String startTime = cursor.getString(cursor.getColumnIndex(VC_COLUMN_START_TIME));
             String endDate = cursor.getString(cursor.getColumnIndex(VC_COLUMN_END_DATE));
             String endTime = cursor.getString(cursor.getColumnIndex(VC_COLUMN_END_TIME));
-            return new VisitCardDTO.Builder().
-                    setId(vc_id).
-                    setEndDate(endDate).
-                    setEndTime(endTime).
-                    build();
+            return new Encounter(vc_id, startDate, startTime).setEncounterDate(endDate).setEncounterTime(endTime);
         }
         return null;
     }
@@ -133,7 +131,7 @@ public class SVCDB extends SQLiteOpenHelper {
      * @param vc The visit card object containing the data to add.
      * @return success/failure of the operation.
      */
-    public boolean addVC(VisitCardDTO vc) throws SQLiteException{
+    public boolean addVC(Encounter vc) throws SQLiteException{
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -147,13 +145,13 @@ public class SVCDB extends SQLiteOpenHelper {
      * @param vc The visit card object containing the data to change.
      * @return success/failure of the operation.
      */
-    public boolean editVC(VisitCardDTO vc) throws SQLiteException {
+    public boolean editVC(Encounter vc) throws SQLiteException {
         //Change according to our project- Ariela
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(VC_COLUMN_ID, vc.getId());
 
-        long update_result= db.update(VC_TABLE_NAME, contentValues,"id = ?", new String[] { Integer.toString(vc.getId()) });
+        long update_result= db.update(VC_TABLE_NAME, contentValues,"id = ?", new String[] { vc.getId() });
         System.out.println("HI " + update_result);
         return update_result != -1;
     }
@@ -168,39 +166,30 @@ public class SVCDB extends SQLiteOpenHelper {
      * @param id The id of the visit card to delete
      * @return success/failure of the operation.
      */
-    public boolean deleteVC(int id) throws SQLiteException{
+    public boolean deleteVC(String id) throws SQLiteException{
         SQLiteDatabase db = this.getWritableDatabase();
-        long delete_result= db.delete(VC_TABLE_NAME,"id = ? ", new String[] {Integer.toString(id)});
+        long delete_result= db.delete(VC_TABLE_NAME,"id = ? ", new String[Integer.parseInt(id)]);
         return delete_result != -1;
     }
 
 
     /**
      * Gets a list of all the visit cards owned by the given user.
-     * @param userEmail The email of the user owning the visit cards.
      * @return The visit cards owned by the user (empty list if user owns none).
      */
     //DELETE???- Ariela
-    public ArrayList<VisitCardDTO> getUserVisitCards(String id) throws SQLiteException{
+    public ArrayList<Encounter> getUserVisitCards() throws SQLiteException{
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT * FROM encounterLog WHERE id = ?";
-        Cursor cursor = db.rawQuery(sql, new String[] { id });
-        ArrayList<VisitCardDTO> visitCards = new ArrayList<>();
+        String sql = "SELECT * FROM encounterLog";
+        Cursor cursor = db.rawQuery(sql, new String[] { "" });
+        ArrayList<Encounter> visitCards = new ArrayList<>();
         cursor.moveToFirst();
 
         while(cursor.isAfterLast() == false){
-            int id = cursor.getInt(cursor.getColumnIndex(VC_COLUMN_ENCOUNTER_ID));
-            System.out.println(id);
-            String id = cursor.getString(cursor.getColumnIndex(VC_COLUMN_ID));
+            visitCards.add(new Encounter(cursor.getString(Integer.parseInt(VC_COLUMN_ID)), cursor.getString(Integer.parseInt(VC_COLUMN_START_DATE)),
+                    cursor.getString(Integer.parseInt(VC_COLUMN_START_TIME))).setEncounterTime(cursor.getString(Integer.parseInt(VC_COLUMN_END_TIME)))
+                    .setEncounterDate(cursor.getString(Integer.parseInt(VC_COLUMN_END_DATE))));
 
-
-
-            visitCards.add(new VisitCardDTO.Builder().
-                                            setId(id).
-                                            setEncounter(encounter_time).
-                                            setEncounterDate(encounter_date).
-                                            build()
-            );
             cursor.moveToNext();
         }
         return visitCards;

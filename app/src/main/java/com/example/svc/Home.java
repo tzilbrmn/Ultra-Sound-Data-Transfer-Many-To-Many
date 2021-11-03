@@ -18,10 +18,9 @@ import java.util.ArrayList;
 
 import Utils.Constants;
 import Utils.utils;
+import models.Encounter;
 import models.SVCDB;
-import models.UserDTO;
-import models.VisitCardDAO;
-import models.VisitCardDTO;
+import models.User;
 
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)/*change to oreo version of OS*/
 public class Home extends AppCompatActivity {
@@ -32,8 +31,8 @@ public class Home extends AppCompatActivity {
      * user - The currently logged in user.
      * visitCardsTable - the table element to view the visit cards in.
      */
-    private ArrayList<VisitCardDTO> userVisitCards;
-    private UserDTO user;
+    private ArrayList<Encounter> userVisitCards;
+    private User user;
     private SVCDB db;
     private TableLayout visitCardsTable;
 
@@ -52,9 +51,9 @@ public class Home extends AppCompatActivity {
 
         // Get the Intent that started this activity and extract the user.
         Intent intent = getIntent();
-        user = UserDTO.stringToUser(intent.getStringExtra(Constants.USER));
+        user = user.stringToUser(intent.getStringExtra(Constants.USER));
         //get the visit cards owned by this user.
-        userVisitCards = VisitCardDAO.getUserVisitCards(user.getEmail(),db);
+        userVisitCards = Encounter.getUserVisitCards(user.getId(),db);
         if(userVisitCards == null){
             new AlertDialog.Builder(this)
                     .setTitle("An Error!")
@@ -64,16 +63,13 @@ public class Home extends AppCompatActivity {
                     .show();
             return;
         }
-        // Capture the layout's TextView and set the string as its text
-        TextView textView = findViewById(R.id.welcomeTV);
-        textView.setText("Welcome, " + user.getFull_name());
 
         //initialize the table layout.
         visitCardsTable = (TableLayout) findViewById(R.id.visitCardsTable);
 
         //for each visit card the user owns, initialize a table row with its' data.
         for(int i=1; i <= userVisitCards.size(); i++){
-            VisitCardDTO vc = userVisitCards.get(i-1);
+            Encounter vc = userVisitCards.get(i-1);
             //initialize the row
             TableRow row = new TableRow(this);
             TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,TableRow.LayoutParams.WRAP_CONTENT);
@@ -90,7 +86,7 @@ public class Home extends AppCompatActivity {
 
             //set the encounter time view
             TextView encounterTime = new TextView(this);
-            encounterTime.setText(vc.getEncounterTime());
+            encounterTime.setText(vc.getEncounterStartTime());
             lp.setMargins(utils.pxFromDp(this,8),0,utils.pxFromDp(this,16),0);
             row.addView(encounterTime,lp);
 

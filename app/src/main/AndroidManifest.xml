@@ -9,7 +9,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SVC">
-        <activity android:name=".ResetPassword"></activity>
         <activity android:name=".ViewProfile" />
         <activity
             android:name=".EditVC"
