@@ -19,14 +19,17 @@ import java.util.ArrayList;
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class SVCDB extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2; //Check what does it mean- Ariela
+    private Context context;
+    private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "SVCDB.db"; //Change later - Ariela
 
     //Constants for the VisitCard table
     //TAL - decide what to do
+
+    //Change time from String to time format- Ariela !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
     private static final String VC_TABLE_NAME = "encounterLog";
     private static final String VC_COLUMN_ENCOUNTER_ID = "encounterId";
-    private static final String VC_COLUMN_ID = "id"; //this is the PK
+    private static final String VC_COLUMN_ID = "id"; //this is the PK, the Id of the user with whom the encounter occurred
     private static final String VC_COLUMN_START_DATE = "startDate";
     private static final String VC_COLUMN_END_DATE = "endDate";
     private static final String VC_COLUMN_START_TIME = "startTime";
@@ -38,6 +41,7 @@ public class SVCDB extends SQLiteOpenHelper {
      */
     public SVCDB(Context context){
         super(context, DATABASE_NAME , null, 1);
+        this.context = context;
     }
 
 
@@ -47,6 +51,8 @@ public class SVCDB extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
+
+        //Change time from String to time format- Ariela !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         // TODO Auto-generated method stub
         db.execSQL(
                 "CREATE TABLE `encounterLog` (" +
@@ -86,7 +92,7 @@ public class SVCDB extends SQLiteOpenHelper {
     //DELETE?? - Ariela (a structure for adding new entity to a table)
     public boolean addUser(User user) throws SQLiteException{
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
+        ContentValues contentValues = new ContentValues();//store all the data from the application and pass to the db tabel
         contentValues.put(VC_COLUMN_ID, user.getId());
 
         long insert_result = db.insert(VC_TABLE_NAME, null, contentValues);
@@ -98,32 +104,40 @@ public class SVCDB extends SQLiteOpenHelper {
 
     //Visit card related methods
 
-    public Encounter getVC(int id) throws SQLiteException{
+    public Encounter getVC(String id) throws SQLiteException{
+
+        //Change time from String to time format- Ariela !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM encounterLog WHERE id = ?";
-        Cursor cursor = db.rawQuery(sql, new String[] { Integer.toString(id) });
+        //Cursor cursor = db.rawQuery(sql, new String[] { Integer.toString(id) });
+        Cursor cursor = db.rawQuery(sql, new String[] { id });
         if(cursor.moveToFirst()){
-            String vc_id = cursor.getString(cursor.getColumnIndex(VC_COLUMN_ID));
+            String en_id = cursor.getString(cursor.getColumnIndex(VC_COLUMN_ID));
             String startDate = cursor.getString(cursor.getColumnIndex(VC_COLUMN_START_DATE));
             String startTime = cursor.getString(cursor.getColumnIndex(VC_COLUMN_START_TIME));
             String endDate = cursor.getString(cursor.getColumnIndex(VC_COLUMN_END_DATE));
             String endTime = cursor.getString(cursor.getColumnIndex(VC_COLUMN_END_TIME));
-            return new Encounter(vc_id, startDate, startTime).setEncounterDate(endDate).setEncounterTime(endTime);
+            return new Encounter(en_id, startDate, startTime).setEncounterDate(endDate).setEncounterTime(endTime);
         }
         return null;
     }
     /**
-     * Gets a visit card  from the database corresponding to the passed ID (PK).
-     * @param id The id field of the visit card to be fetched.
-     * @return A visit card object containing all the data (null if not found)
+     * Gets an encounter end date and time  from the database corresponding to the passed ID (PK).
+     * @param id The id field of the encounter to be fetched.
+     * @return true or false if the object is in the database
      */
     public boolean VCexists(String id) throws SQLiteException{
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT endDate, endTime FROM encounterLog WHERE id = ? AND MAX(encounterId)";
-        Cursor cursor = db.rawQuery(sql, new String[] { id });
-        //Chack if cursor is not empty -Ariela ???????????????????????????????????
-        //else:
-       return false;
+        //String sql = "SELECT endDate, endTime FROM encounterLog WHERE id = ? AND MAX(encounterId)";
+        String sql = "SELECT * FROM encounterLog WHERE id = ? AND MAX(encounterId)";
+        //Cursor cursor = db.rawQuery(sql, new String[] { id });
+        Cursor cursor = db.rawQuery(sql, id);
+        if(cursor.getCount()<=0){
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
     }
 
     /**
@@ -133,9 +147,15 @@ public class SVCDB extends SQLiteOpenHelper {
      */
     public boolean addVC(Encounter vc) throws SQLiteException{
 
+        //Change time from String to time format- Ariela !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(VC_COLUMN_ID, vc.getId());
+        contentValues.put(VC_COLUMN_START_DATE, vc.getEncounterStartDate());
+        contentValues.put(VC_COLUMN_END_DATE, vc.getEncounterEndDate());
+        contentValues.put(VC_COLUMN_START_TIME, vc.getEncounterStartTime());
+        contentValues.put(VC_COLUMN_END_TIME, vc.getEncounterEndTime());
+
         long insert_result = db.insert(VC_TABLE_NAME, null, contentValues);
         return insert_result != -1;
     }

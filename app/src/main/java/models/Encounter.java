@@ -68,8 +68,25 @@ public class Encounter {
      *
      * @return encounter date of this object
      */
+    public String getEncounterEndDate(){
+        return this.encounterEndDate;
+    }
+
+
+    /**
+     *
+     * @return encounter date of this object
+     */
     public String getEncounterStartTime(){
         return this.encounterStartTime;
+    }
+
+    /**
+     *
+     * @return encounter date of this object
+     */
+    public String getEncounterEndTime(){
+        return this.encounterEndTime;
     }
 
     //=======================================================================================
@@ -78,6 +95,7 @@ public class Encounter {
      *
      * @return A string representation of this object.
      */
+    //Add end date and time? -Ariela
     @Override
     public String toString() {
         return String.format("%d;%s;%s",this.id,this.encounterStartDate, this.encounterStartTime);
@@ -114,7 +132,7 @@ public class Encounter {
 
     /**
      * gets the list of visit cards owned by the user.
-     * @param email The user email
+     * @param id The user Id
      * @param db The DB instance
      * @return A list of visit cards (empty if user owns none).
      */
@@ -130,24 +148,40 @@ public class Encounter {
 
     /**
      * Adds a visit card to the DB.
-     * @param vc The visit card to add.
+     * @param en The encounter to add.
      * @param db The DB instance.
      * @return success/failure of the operation
      */
-    public static boolean addVC (Encounter vc, SVCDB db){
+    public static boolean addVC (Encounter en, SVCDB db){
+
+        //Change time from String to time format- Ariela !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         //do input validation!!
         //get the vc from the database
 
 // Add here the time calculation- Ariela
-       /* try{
-            System.out.println(vc.getId());
-            boolean is_exist = db.VCexists(vc.toString());
+        try{
+            System.out.println(en.getId());
+            boolean is_exist = db.VCexists(en.toString());
             if(is_exist)
+            {
+                Encounter original_encounter = db.getVC(en.getId());
+
+                try {
+                    int endDateOriginal = Integer.parseInt(original_encounter.getEncounterEndDate());
+                    int endTimeOriginal = Integer.parseInt(original_encounter.getEncounterEndTime());
+                    int endDateNewEncounter =  Integer.parseInt(en.getEncounterEndDate());
+                    int endTimeNewEncounter =  Integer.parseInt(en.getEncounterEndTime());
+
+                } catch(NumberFormatException nfe) {
+                    System.out.println("Could not parse " + nfe);
+                }
+        //Calculate time differance- Ariela!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
                 return false;
+            }
             return db.addVC(vc);
         } catch (SQLiteException e){
             return false;
-        }   */
+        }
         return true; //change later- Ariela
     }
 }
