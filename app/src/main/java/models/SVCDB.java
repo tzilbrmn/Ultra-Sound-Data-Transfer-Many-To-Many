@@ -26,7 +26,6 @@ public class SVCDB extends SQLiteOpenHelper {
     //Constants for the VisitCard table
     //TAL - decide what to do
 
-    //Change time from String to time format- Ariela !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
     private static final String VC_TABLE_NAME = "encounterLog";
     private static final String VC_COLUMN_ENCOUNTER_ID = "encounterId";
     private static final String VC_COLUMN_ID = "id"; //this is the PK, the Id of the user with whom the encounter occurred
@@ -52,7 +51,6 @@ public class SVCDB extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        //Change time from String to time format- Ariela !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         // TODO Auto-generated method stub
         db.execSQL(
                 "CREATE TABLE `encounterLog` (" +
@@ -106,7 +104,6 @@ public class SVCDB extends SQLiteOpenHelper {
 
     public Encounter getVC(String id) throws SQLiteException{
 
-        //Change time from String to time format- Ariela !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM encounterLog WHERE id = ?";
         //Cursor cursor = db.rawQuery(sql, new String[] { Integer.toString(id) });
@@ -147,7 +144,6 @@ public class SVCDB extends SQLiteOpenHelper {
      */
     public boolean addVC(Encounter vc) throws SQLiteException{
 
-        //Change time from String to time format- Ariela !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(VC_COLUMN_ID, vc.getId());
@@ -170,6 +166,7 @@ public class SVCDB extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(VC_COLUMN_ID, vc.getId());
+
 
         long update_result= db.update(VC_TABLE_NAME, contentValues,"id = ?", new String[] { vc.getId() });
         System.out.println("HI " + update_result);
