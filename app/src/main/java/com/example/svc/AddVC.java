@@ -55,7 +55,6 @@ public class AddVC extends AppCompatActivity {
         //get the user from intent
         Intent intent = getIntent();
         user = new User(intent.getStringExtra(Constants.USER));
-
     }
 
     /**
@@ -65,7 +64,7 @@ public class AddVC extends AppCompatActivity {
      */
     public void addVc(View v){
         //Change time from String to time format- Ariela !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
-        String id = ((EditText) findViewById(R.id.idET)).getText().toString();//will be accepted in the listening process.
+        String id = ((EditText) findViewById(R.id.ETUserId)).getText().toString();//will be accepted in the listening process.
         String encounterTime = new SimpleDateFormat("HHmmss", Locale.getDefault()).format(new Date());
         String encounterDate = new SimpleDateFormat("ddMMyyyy", Locale.getDefault()).format(new Date());
 
@@ -147,7 +146,7 @@ public class AddVC extends AppCompatActivity {
             Encounter receivedVC = Encounter.receiveVisitCard(decompressed);
             //TODO Rani: do the same for the 4 name TF's after you add them..
 
-            ((EditText) findViewById(R.id.IdlET)).setText(receivedVC.getId());
+            ((EditText) findViewById(R.id.ETUserId)).setText(receivedVC.getId());
 
 
         } catch (UnsupportedEncodingException | IllegalArgumentException | IndexOutOfBoundsException e) {
@@ -198,9 +197,9 @@ public class AddVC extends AppCompatActivity {
         // Add id ???????????????????????????????????????????????????????????????????????????
         contact.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                 .withValueBackReference(ContactsContract.RawContacts.Data.RAW_CONTACT_ID, 0)
-                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Id.CONTENT_ITEM_TYPE)
-                .withValue(ContactsContract.CommonDataKinds.Id.DATA, vc.getId())
-                .withValue(ContactsContract.CommonDataKinds.Id.TYPE, ContactsContract.CommonDataKinds.Id.TYPE_WORK)
+                //.withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Id.CONTENT_ITEM_TYPE)
+                //.withValue(ContactsContract.CommonDataKinds.Id.DATA, vc.getId())
+                //.withValue(ContactsContract.CommonDataKinds.Id.TYPE, ContactsContract.CommonDataKinds.Id.TYPE_WORK)
                 .build());
 
         try {

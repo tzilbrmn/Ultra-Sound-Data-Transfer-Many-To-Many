@@ -28,6 +28,8 @@ public class Sender {
     private int EndFrequency;
     private int BitsPerTone;
 
+    public String userId;
+
     /**********************************************************************************************
      * function: sendMsg
      * description: function to send msg via sound
@@ -185,4 +187,11 @@ public class Sender {
     public void setMsg2Send(String sMsg2Send) {
         this.Msg2Send = sMsg2Send;
     }
+
+
+    public void setUserId(String userId) { this.userId = userId; }
+
+
+    public String getUserId() { return userId; }
+
 }

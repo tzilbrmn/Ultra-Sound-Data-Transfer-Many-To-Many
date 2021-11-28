@@ -98,7 +98,7 @@ public class Encounter {
     //Add end date and time? -Ariela
     @Override
     public String toString() {
-        return String.format("%d;%s;%s",this.id,this.encounterStartDate, this.encounterStartTime);
+        return String.format("%s;%s;%s",this.id,this.encounterStartDate, this.encounterStartTime);
     }
 
 
@@ -132,12 +132,11 @@ public class Encounter {
 
     /**
      * gets the list of visit cards owned by the user.
-     * @param id The user Id
      * @param db The DB instance
      * @return A list of visit cards (empty if user owns none).
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static ArrayList<Encounter> getUserVisitCards(String email, SVCDB db){
+    public static ArrayList<Encounter> getUserVisitCards(SVCDB db){
         try{
             return db.getUserVisitCards();
         } catch (SQLiteException e){
@@ -152,6 +151,7 @@ public class Encounter {
      * @param db The DB instance.
      * @return success/failure of the operation
      */
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static boolean addVC (Encounter en, SVCDB db){
 
         //Change time from String to time format- Ariela !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
@@ -178,10 +178,10 @@ public class Encounter {
         //Calculate time differance- Ariela!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
                 return false;
             }
-            return db.addVC(vc);
+            return db.addVC(en);
         } catch (SQLiteException e){
             return false;
         }
-        return true; //change later- Ariela
+        //return true; //change later- Ariela
     }
 }

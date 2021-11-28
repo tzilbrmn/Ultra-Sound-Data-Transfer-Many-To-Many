@@ -11,11 +11,6 @@
         android:theme="@style/Theme.SVC">
         <activity android:name=".ViewProfile" />
         <activity
-            android:name=".EditVC"
-            android:label="@string/title_activity_edit_v_c"
-            android:theme="@style/Theme.SVC.NoActionBar" />
-        <activity android:name=".ViewVisitCard" />
-        <activity
             android:name=".AddVC"
             android:label="Add Visit Card" />
         <activity

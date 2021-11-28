@@ -56,7 +56,7 @@ public class SVCDB extends SQLiteOpenHelper {
         // TODO Auto-generated method stub
         db.execSQL(
                 "CREATE TABLE `encounterLog` (" +
-                        "   'encounterId' int NOT NULL AUTO_INCREMENT, " +
+                        "  `encounterId` int AUTO_INCREMENT, " +
                         "  `id` VARCHAR(255)  PRIMARY KEY, " +
                         "  `startDate` VARCHAR(255), " +
                         "  `endDate` VARCHAR(255), " +
@@ -123,15 +123,15 @@ public class SVCDB extends SQLiteOpenHelper {
     }
     /**
      * Gets an encounter end date and time  from the database corresponding to the passed ID (PK).
-     * @param id The id field of the encounter to be fetched.
+     * @param idToCheck The id field of the encounter to be fetched.
      * @return true or false if the object is in the database
      */
-    public boolean VCexists(String id) throws SQLiteException{
+    public boolean VCexists(String idToCheck) throws SQLiteException{
         SQLiteDatabase db = this.getReadableDatabase();
         //String sql = "SELECT endDate, endTime FROM encounterLog WHERE id = ? AND MAX(encounterId)";
-        String sql = "SELECT * FROM encounterLog WHERE id = ? AND MAX(encounterId)";
+        String sql = "SELECT * FROM encounterLog WHERE id = ? GROUP BY encounterId";
         //Cursor cursor = db.rawQuery(sql, new String[] { id });
-        Cursor cursor = db.rawQuery(sql, id);
+        Cursor cursor = db.rawQuery(sql, new String[] { idToCheck });
         if(cursor.getCount()<=0){
             cursor.close();
             return false;
@@ -201,14 +201,14 @@ public class SVCDB extends SQLiteOpenHelper {
     public ArrayList<Encounter> getUserVisitCards() throws SQLiteException{
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM encounterLog";
-        Cursor cursor = db.rawQuery(sql, new String[] { "" });
+        Cursor cursor = db.rawQuery(sql, null);
         ArrayList<Encounter> visitCards = new ArrayList<>();
         cursor.moveToFirst();
 
         while(cursor.isAfterLast() == false){
-            visitCards.add(new Encounter(cursor.getString(Integer.parseInt(VC_COLUMN_ID)), cursor.getString(Integer.parseInt(VC_COLUMN_START_DATE)),
-                    cursor.getString(Integer.parseInt(VC_COLUMN_START_TIME))).setEncounterTime(cursor.getString(Integer.parseInt(VC_COLUMN_END_TIME)))
-                    .setEncounterDate(cursor.getString(Integer.parseInt(VC_COLUMN_END_DATE))));
+            visitCards.add(new Encounter(cursor.getString(cursor.getColumnIndex(VC_COLUMN_ID)), cursor.getString(cursor.getColumnIndex(VC_COLUMN_START_DATE)),
+                    cursor.getString(cursor.getColumnIndex(VC_COLUMN_START_TIME))).setEncounterTime(cursor.getString(cursor.getColumnIndex(VC_COLUMN_END_TIME)))
+                    .setEncounterDate(cursor.getString(cursor.getColumnIndex(VC_COLUMN_END_DATE))));
 
             cursor.moveToNext();
         }

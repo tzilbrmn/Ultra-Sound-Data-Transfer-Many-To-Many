@@ -65,146 +65,16 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/prenameTF"
+                android:id="@+id/ETUserId"
                 android:layout_width="329dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Prefix"
+                android:hint="Enter here phone number"
                 android:importantForAutofill="no"
-                android:inputType="textPersonName"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp"/>
-            <EditText
-                android:id="@+id/fnameTF"
-                android:layout_width="329dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="First Name"
-                android:importantForAutofill="no"
-                android:inputType="textPersonName"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp"/>
-            <EditText
-                android:id="@+id/mnameTF"
-                android:layout_width="329dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="Middle Name"
-                android:importantForAutofill="no"
-                android:inputType="textPersonName"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp"/>
-
-            <EditText
-                android:id="@+id/lnameTF"
-                android:layout_width="329dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="Last Name"
-                android:importantForAutofill="no"
-                android:inputType="textPersonName"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp"/>
-
-            <EditText
-                android:id="@+id/mobileTF"
-                android:layout_width="329dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="@string/mobile"
-                android:importantForAutofill="no"
-                android:inputType="phone"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp" />
-
-            <EditText
-                android:id="@+id/companyTF"
-                android:layout_width="329dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="@string/company"
-                android:inputType="textPersonName"
-                android:importantForAutofill="no"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp" />
-
-            <EditText
-                android:id="@+id/telephoneTF"
-                android:layout_width="329dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="@string/telephone"
-                android:inputType="phone"
-                android:importantForAutofill="no"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp" />
-
-            <EditText
-                android:id="@+id/emailET"
-                android:layout_width="329dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="@string/email"
-                android:inputType="textEmailAddress"
-                android:importantForAutofill="no"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp" />
-
-            <EditText
-                android:id="@+id/faxTF"
-                android:layout_width="329dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="@string/fax"
-                android:inputType="phone"
-                android:importantForAutofill="no"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp" />
-
-            <EditText
-                android:id="@+id/positionTF"
-                android:layout_width="329dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="Position Title"
-                android:inputType="textPersonName"
-                android:importantForAutofill="no"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp" />
-
-            <EditText
-                android:id="@+id/websiteTF"
-                android:layout_width="329dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="@string/website"
-                android:inputType="textPersonName"
-                android:importantForAutofill="no"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp" />
-
-            <EditText
-                android:id="@+id/addressTF"
-                android:layout_width="326dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="@string/address"
-                android:inputType="textPostalAddress"
-                android:importantForAutofill="no"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp" />
+                android:inputType="textPersonName" />
 
         </LinearLayout>
     </ScrollView>
