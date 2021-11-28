@@ -158,23 +158,28 @@ public class Encounter {
         //do input validation!!
         //get the vc from the database
 
-// Add here the time calculation- Ariela
+        SimpleDateFormat dateFormat = new SimpleDateFormat("hmmaa");
+
         try{
             System.out.println(en.getId());
             boolean is_exist = db.VCexists(en.toString());
             if(is_exist)
             {
                 Encounter original_encounter = db.getVC(en.getId());
-
+                //get the time from DB
                 try {
-                    int endDateOriginal = Integer.parseInt(original_encounter.getEncounterEndDate());
-                    int endTimeOriginal = Integer.parseInt(original_encounter.getEncounterEndTime());
-                    int endDateNewEncounter =  Integer.parseInt(en.getEncounterEndDate());
-                    int endTimeNewEncounter =  Integer.parseInt(en.getEncounterEndTime());
+                    Date endDateOriginal = dateFormat.parse(original_encounter.getEncounterEndDate());
+                    Date endTimeOriginal = dateFormat.parse(original_encounter.getEncounterEndTime());
+                    Date endDateNewEncounter = dateFormat.parse(en.getEncounterEndDate());
+                    Date endTimeNewEncounter = dateFormat.parse(en.getEncounterEndTime());
 
-                } catch(NumberFormatException nfe) {
+                     } catch(NumberFormatException nfe) {
                     System.out.println("Could not parse " + nfe);
-                }
+                    } catch (ParseException e) {
+                 }
+                //add calculation of the date
+                if()
+
         //Calculate time differance- Ariela!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
                 return false;
             }
