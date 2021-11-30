@@ -6,6 +6,9 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
+import java.time.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import Utils.utils;
 
@@ -157,8 +160,7 @@ public class Encounter {
         //Change time from String to time format- Ariela !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         //do input validation!!
         //get the vc from the database
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("hmmaa");
+        SimpleDateFormat dateAndTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
         try{
             System.out.println(en.getId());
@@ -168,25 +170,58 @@ public class Encounter {
                 Encounter original_encounter = db.getVC(en.getId());
                 //get the time from DB
                 try {
-                    Date endDateOriginal = dateFormat.parse(original_encounter.getEncounterEndDate());
-                    Date endTimeOriginal = dateFormat.parse(original_encounter.getEncounterEndTime());
-                    Date endDateNewEncounter = dateFormat.parse(en.getEncounterEndDate());
-                    Date endTimeNewEncounter = dateFormat.parse(en.getEncounterEndTime());
+                    //get the date and time from DB
+                    String originalEnd = new String(original_encounter.getEncounterEndDate() + " "+ original_encounter.getEncounterEndTime());
+                    String newEnd = new String(en.getEncounterEndDate() + " " +en.getEncounterEndTime());
 
-                     } catch(NumberFormatException nfe) {
+                    //combine date and time to calculate the differance
+                    Date originalEncounter = dateAndTimeFormat.parse(origianlEnd);
+                    Date newEncounter = dateAndTimeFormat.parse(newEnd);
+
+                    //calculate the duration between the two dates.
+                    long duration = newEncounter.getTime() - originalEncounter.getTime();
+
+                    long secondsInMilli = 1000;
+                    long minutesInMilli = secondsInMilli * 60;
+                    long hoursInMilli = minutesInMilli * 60;
+                    long daysInMilli = hoursInMilli * 24;
+
+                    long elapsedDays = duration / daysInMilli;
+                    duration = duration % daysInMilli;
+
+                    long elapsedHours = duration / hoursInMilli;
+                    duration = duration % hoursInMilli;
+
+                    long elapsedMinutes = duration / minutesInMilli;
+                    duration = duration % minutesInMilli;
+
+                    long elapsedSeconds = duration / secondsInMilli;
+
+                    if((elapsedDays == 0)&&(elapsedHours == 0)&&(((elapsedMinutes == 14)&&(elapsedSeconds <= 59)) ||((elapsedMinutes == 15)&&(elapsedSeconds == 0))||(elapsedMinutes <= 13))){
+                        //update encounter
+                        System.out.println("update encounter");
+                        return true;
+                    }
+                    else {
+                        System.out.println("new encounter");
+                        return true;
+                    }
+
+                } catch(NumberFormatException nfe) {
                     System.out.println("Could not parse " + nfe);
+                    return false;
                     } catch (ParseException e) {
+                    return false;
                  }
-                //add calculation of the date
-                if()
+            }
 
-        //Calculate time differance- Ariela!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
-                return false;
+            else{
+                //add new encounter
             }
             return db.addVC(en);
         } catch (SQLiteException e){
             return false;
         }
-        //return true; //change later- Ariela
+        return true; //change later- Ariela
     }
 }
