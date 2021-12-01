@@ -15,7 +15,12 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import SenderPackage.Sender;
 import Utils.Constants;
@@ -55,6 +60,10 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
         txtShowInfo.setText("in onCreate");
 
         db = new SVCDB(this);
+
+        //DO THIS ONLY ON DEBUG!!!
+        //db.onUpgrade(db.getReadableDatabase(), 1, 1);
+        //db.dropTable();
 
         Button btn = (Button)findViewById(R.id.signUpBtn);
         btn.setOnClickListener(this);
@@ -151,6 +160,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
         startActivity(intent);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void signUp(View v){
         String id = ((EditText)findViewById(R.id.TxtUserId)).getText().toString();  // TAL - need to get from phone
         cSender = new Sender();
@@ -160,11 +170,15 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
 
 
         //Try to use the DB
-        Encounter enc = new Encounter(id, "27112021", "2015");
-        enc.setEncounterDate("28112021");
-        enc.setEncounterTime("1812");
+        Encounter enc = new Encounter(id, "2021-03-16", "11:44:36");
+
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalDateTime ldt = LocalDateTime.now();
+        enc.setEncounterTime(timeFormat.format(ldt));
+        enc.setEncounterDate(dateFormat.format(ldt));
+
         enc.addVC(enc, db);
-        userVisitCards = Encounter.getUserVisitCards(db);
 
         int lastIndex = userVisitCards.size() - 1;
         txtShowInfo.setText("Info from DB: id- " + userVisitCards.get(lastIndex).getId() + " start date- " + userVisitCards.get(lastIndex).getEncounterStartDate() + " start time- " + userVisitCards.get(lastIndex).getEncounterStartTime());

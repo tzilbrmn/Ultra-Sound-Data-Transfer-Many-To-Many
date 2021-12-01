@@ -52,10 +52,12 @@ public class SVCDB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         // TODO Auto-generated method stub
+        //SQLiteDatabase db = new SQLiteDatabase("\db");
+
         db.execSQL(
                 "CREATE TABLE `encounterLog` (" +
-                        "  `encounterId` int AUTO_INCREMENT, " +
-                        "  `id` VARCHAR(255)  PRIMARY KEY, " +
+                        "  `encounterId` int AUTO_INCREMENT PRIMARY KEY, " +
+                        "  `id` VARCHAR(255) , " +
                         "  `startDate` VARCHAR(255), " +
                         "  `endDate` VARCHAR(255), " +
                         "  `startTime` VARCHAR(255), " +
@@ -105,7 +107,7 @@ public class SVCDB extends SQLiteOpenHelper {
     public Encounter getVC(String id) throws SQLiteException{
 
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT * FROM encounterLog WHERE id = ?";
+        String sql = "SELECT * FROM encounterLog WHERE id = ? ORDER BY encounterId DESC LIMIT 1";
         //Cursor cursor = db.rawQuery(sql, new String[] { Integer.toString(id) });
         Cursor cursor = db.rawQuery(sql, new String[] { id });
         if(cursor.moveToFirst()){
@@ -126,7 +128,7 @@ public class SVCDB extends SQLiteOpenHelper {
     public boolean VCexists(String idToCheck) throws SQLiteException{
         SQLiteDatabase db = this.getReadableDatabase();
         //String sql = "SELECT endDate, endTime FROM encounterLog WHERE id = ? AND MAX(encounterId)";
-        String sql = "SELECT TOP 1 * FROM encounterLog WHERE id = ? ORDER BY encounterId DESC";
+        String sql = "SELECT * FROM encounterLog WHERE id = ? ORDER BY encounterId DESC LIMIT 1";
         //Cursor cursor = db.rawQuery(sql, new String[] { id });
         Cursor cursor = db.rawQuery(sql, new String[] { idToCheck });
         if(cursor.getCount()<=0){
@@ -190,6 +192,20 @@ public class SVCDB extends SQLiteOpenHelper {
         return delete_result != -1;
     }
 
+    /**
+     * deletes a visit card.
+     * @return success/failure of the operation.
+     */
+    /*
+     * deletes a visit card.
+     * @param id The id of the visit card to delete
+     * @return success/failure of the operation.
+     */
+ /*   public void dropTable() throws SQLiteException{
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE `encounterLog`;");
+    }
+*/
 
     /**
      * Gets a list of all the visit cards owned by the given user.

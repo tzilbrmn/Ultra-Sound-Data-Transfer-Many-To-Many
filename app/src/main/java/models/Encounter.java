@@ -5,6 +5,7 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.time.*;
 import java.text.SimpleDateFormat;
@@ -175,7 +176,7 @@ public class Encounter {
                     String newEnd = new String(en.getEncounterEndDate() + " " +en.getEncounterEndTime());
 
                     //combine date and time to calculate the differance
-                    Date originalEncounter = dateAndTimeFormat.parse(origianlEnd);
+                    Date originalEncounter = dateAndTimeFormat.parse(originalEnd);
                     Date newEncounter = dateAndTimeFormat.parse(newEnd);
 
                     //calculate the duration between the two dates.
@@ -221,7 +222,6 @@ public class Encounter {
         } catch (SQLiteException e){
             return false;
         }
-        return false; //change later- Ariela
     }
 
 

@@ -65,8 +65,8 @@ public class AddVC extends AppCompatActivity {
     public void addVc(View v){
         //Change time from String to time format- Ariela !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         String id = ((EditText) findViewById(R.id.ETUserId)).getText().toString();//will be accepted in the listening process.
-        String encounterTime = new SimpleDateFormat("HHmmss", Locale.getDefault()).format(new Date());
-        String encounterDate = new SimpleDateFormat("ddMMyyyy", Locale.getDefault()).format(new Date());
+        String encounterTime = new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new Date());
+        String encounterDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
 
         //try to add the VC, catch possible IllegalArgumentException if any of the mandatory fields is missing. save the VC in the phone book afterwards.
