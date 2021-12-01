@@ -126,7 +126,7 @@ public class SVCDB extends SQLiteOpenHelper {
     public boolean VCexists(String idToCheck) throws SQLiteException{
         SQLiteDatabase db = this.getReadableDatabase();
         //String sql = "SELECT endDate, endTime FROM encounterLog WHERE id = ? AND MAX(encounterId)";
-        String sql = "SELECT * FROM encounterLog WHERE id = ? GROUP BY encounterId";
+        String sql = "SELECT TOP 1 * FROM encounterLog WHERE id = ? ORDER BY encounterId DESC";
         //Cursor cursor = db.rawQuery(sql, new String[] { id });
         Cursor cursor = db.rawQuery(sql, new String[] { idToCheck });
         if(cursor.getCount()<=0){
@@ -165,9 +165,10 @@ public class SVCDB extends SQLiteOpenHelper {
         //Change according to our project- Ariela
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(VC_COLUMN_ID, vc.getId());
+        contentValues.put(VC_COLUMN_END_DATE, vc.getEncounterEndDate());
+        contentValues.put(VC_COLUMN_END_TIME, vc.getEncounterEndTime());
 
-
+//table name, name of values to change, where, the new valuse.
         long update_result= db.update(VC_TABLE_NAME, contentValues,"id = ?", new String[] { vc.getId() });
         System.out.println("HI " + update_result);
         return update_result != -1;

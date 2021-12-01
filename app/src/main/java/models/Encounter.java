@@ -199,12 +199,11 @@ public class Encounter {
 
                     if((elapsedDays == 0)&&(elapsedHours == 0)&&(((elapsedMinutes == 14)&&(elapsedSeconds <= 59)) ||((elapsedMinutes == 15)&&(elapsedSeconds == 0))||(elapsedMinutes <= 13))){
                         //update encounter
-                        System.out.println("update encounter");
-                        return true;
+                        return db.editVC(en);
                     }
                     else {
-                        System.out.println("new encounter");
-                        return true;
+                        //add new encounter
+                        return db.addVC(en);
                     }
 
                 } catch(NumberFormatException nfe) {
@@ -217,11 +216,13 @@ public class Encounter {
 
             else{
                 //add new encounter
+               return db.addVC(en);
             }
-            return db.addVC(en);
         } catch (SQLiteException e){
             return false;
         }
-        return true; //change later- Ariela
+        return false; //change later- Ariela
     }
+
+
 }
