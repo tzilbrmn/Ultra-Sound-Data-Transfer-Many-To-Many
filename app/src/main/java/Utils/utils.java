@@ -2,6 +2,7 @@ package Utils;
 
 import android.content.Context;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
@@ -53,9 +54,9 @@ public class utils {
         StringBuilder binRes = new StringBuilder("");
         for (int i = 0; i < n; i++) {
             // convert each char to
-            // ASCII value
-            int val = Integer.valueOf(s.charAt(i));
-            // Convert ASCII value to binary
+            // int value
+            int val = Character.getNumericValue(s.charAt(i));
+            // Convert int value to binary
             String bin = "";
             while (val > 0) {
                 if (val % 2 == 1)
@@ -64,13 +65,14 @@ public class utils {
                     bin += '0';
                 val /= 2;
             }
-            while(bin.length() < 16)
+            while(bin.length() < 4)
                 bin += '0';
-            bin = reverse(bin);
+            //bin = reverse(bin);
             binRes.append(bin);
         }
         return binRes.toString();
     }
+
 
     /**
      * converts a byte array to its' binary representation
@@ -156,6 +158,22 @@ public class utils {
         return bytes.array();
     }
 
+    public static String convertStringToHex(String str) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+
+        char[] charArray = new char[str.length()];
+        for (int i = 0; i < str.length(); i++) {
+            charArray[i] = str.charAt(i);
+        }
+
+        for (char c : charArray) {
+            String charToHex = Integer.toHexString(Character.getNumericValue(c));
+            stringBuilder.append(charToHex);
+        }
+
+        return stringBuilder.toString();
+    }
 
 
 

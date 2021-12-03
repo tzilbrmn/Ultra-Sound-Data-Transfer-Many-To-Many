@@ -13,6 +13,7 @@ import Sound.FrequencyConverter;
 
 import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
 import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
+import static com.example.svc.CommunicationNetwork.calcChecksum;
 
 /**********************************************************************************************
  * Class: Receiver
@@ -64,6 +65,9 @@ public class Receiver implements CallBack{
         int startHandShakeCounter = 0;
         int endHandShakeCounter = 0;
 
+        int msgLen = 27;
+        int msgCount = 0;
+
         while (bIsRecording) {
             //Wait and get recorded data
             byte[] NewTone;
@@ -104,12 +108,24 @@ public class Receiver implements CallBack{
                     }
                 } else {
                     endHandShakeCounter = 0;
-                    cFrequencyConverter.calculateBits(NewToneFrequency);
+                    if (msgCount < 25) {
+                        cFrequencyConverter.calculateBits(NewToneFrequency, false);
+                    }
+                    else
+                        cFrequencyConverter.calculateBits(NewToneFrequency, true);
                 }
             }
         }
-
-        ReceivedMsg = cFrequencyConverter.getMsgArray();
+        ArrayList<String> data = cFrequencyConverter.getMsgArrayNoChecksum();
+        data.remove(0);
+        data.remove(data.size() -1);
+        String chksum = calcChecksum(data.toString());
+        if (chksum == cFrequencyConverter.getMsgArrayChecksum().toString())
+            ReceivedMsg = cFrequencyConverter.getMsgArray();
+        else
+        {
+            Log.d("Debug ", "Error receiving the frame.");
+        }
         return ReceivedMsg;
     }
 

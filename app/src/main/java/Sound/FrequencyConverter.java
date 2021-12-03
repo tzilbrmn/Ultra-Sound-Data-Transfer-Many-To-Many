@@ -27,6 +27,9 @@ public class FrequencyConverter {
     private byte currByte;
     private int currShift;
     private ArrayList<String> MsgArray;
+
+    private ArrayList<String> MsgArrayChecksum;
+    private ArrayList<String> MsgArrayNoChecksum;
     Map<Integer, String> frequenciesToFourBit;
 
     /**********************************************************************************************
@@ -34,6 +37,7 @@ public class FrequencyConverter {
      * description: constructor
      * args: int startFrequency, int endFrequency, int numberOfBitsInOneTone
      **********************************************************************************************/
+    // Tal & Ariela - Can change numberOfBitsInOneTone to hardcoded size of msg
     public FrequencyConverter(int startFrequency, int endFrequency, int numberOfBitsInOneTone){
         this.BitsPerTone=numberOfBitsInOneTone;
         this.padding= 100;
@@ -197,17 +201,23 @@ public class FrequencyConverter {
         return freqArr;
     }
 
+
     /**********************************************************************************************
      * function: calculateBits
      * description: function to calculate bit from given frequency
      * args: frequency
      * return: void
      **********************************************************************************************/
-    public void calculateBits(double frequency){
+    public void calculateBits(double frequency, boolean isChecksum){
         int frequencyInt = (int) Math.round(frequency);
         Log.d("we got = ", String.valueOf(frequencyInt));
         if(frequencyInt > 17600 && frequencyInt < 19200)
         {
+            if (!isChecksum) {
+                MsgArrayNoChecksum.add(frequenciesToFourBit.get(new Integer(frequencyInt)));
+            }
+            else
+                MsgArrayChecksum.add(frequenciesToFourBit.get(new Integer(frequencyInt)));
             MsgArray.add(frequenciesToFourBit.get(new Integer(frequencyInt)));
         }
     }
@@ -249,4 +259,19 @@ public class FrequencyConverter {
      * return: ArrayList<String>
      **********************************************************************************************/
     public ArrayList<String> getMsgArray() { return this.MsgArray; }
+
+
+    public ArrayList<String> getMsgArrayNoChecksum() { return MsgArrayNoChecksum; }
+
+    public void setMsgArrayNoChecksum(ArrayList<String> msgArrayNoChecksum) {
+        MsgArrayNoChecksum = msgArrayNoChecksum;
+    }
+
+    public ArrayList<String> getMsgArrayChecksum() {
+        return MsgArrayChecksum;
+    }
+
+    public void setMsgArrayChecksum(ArrayList<String> msgArrayChecksum) {
+        MsgArrayChecksum = msgArrayChecksum;
+    }
 }

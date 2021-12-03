@@ -31,6 +31,8 @@ public class Recorder {
     //Callback used to set up filled buffer
     private CallBack callback;
 
+    public boolean isIdle = false;
+
     /**********************************************************************************************
      * function: Recorder
      * description: empty constructor
@@ -77,6 +79,7 @@ public class Recorder {
                 byte[] buffer = new byte[optimalBufSize];
                 recorder.startRecording();
                 while (thread != null && !thread.isInterrupted() && (recorder.read(buffer, 0, optimalBufSize)) > 0) {
+                    isIdle = true;
                     callback.onBufferAvailable(buffer);
                 }
                 recorder.stop();
@@ -94,6 +97,7 @@ public class Recorder {
      **********************************************************************************************/
     public void stop() {
         if (thread != null) {
+            isIdle = false;
             thread.interrupt();
             thread = null;
         }
