@@ -9,6 +9,11 @@ import java.util.zip.Checksum;
 public class CommunicationNetwork {
     String frame;
 
+    /**
+     * Builds the frame according to the user's id
+     * @param id The id of the user.
+     * @return If the process succeeded.
+     */
     public boolean composeFrame(String id) {
         String origBinaryRep = Utils.utils.convertStringToHex(id);
         String frame = 'F' + origBinaryRep + 'F';
@@ -25,6 +30,11 @@ public class CommunicationNetwork {
         return false;
     }
 
+    /**
+     * Calculates the checksum of the message (according to the data segment)
+     * @param str The data to calculate the checksum for.
+     * @return The checksum calculated.
+     */
     public static String calcChecksum(String str){
 
         char[] ch = new char[str.length()];

@@ -158,6 +158,11 @@ public class utils {
         return bytes.array();
     }
 
+    /**
+     * converts a string to a Hex string
+     * @param str The original string
+     * @return The Hex string.
+     */
     public static String convertStringToHex(String str) {
         StringBuilder stringBuilder = new StringBuilder();
 
