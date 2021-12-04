@@ -194,4 +194,51 @@ public class Sender {
 
     public String getUserId() { return userId; }
 
+    public void sendErrorDetected(Integer[] settingsArr) {
+        StartFrequency = settingsArr[0];
+        EndFrequency = settingsArr[1];
+        BitsPerTone = settingsArr[2];
+
+        FrequencyConverter cFrequencyConverter = new FrequencyConverter(StartFrequency, EndFrequency, BitsPerTone);
+        ArrayList<Integer> MsgFrequencies = cFrequencyConverter.calculateMessageFrequencies("111111111111");
+
+        int bufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
+        MyAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize, AudioTrack.MODE_STREAM);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            MyAudioTrack.setVolume(MyAudioTrack.getMaxVolume());
+        }
+
+        MyAudioTrack.play();
+
+        int NumOfHandShakes = 4;
+        int NumOfTones = MsgFrequencies.size() + NumOfHandShakes;
+
+        // start handshake
+        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
+        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
+        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
+        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
+        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
+        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
+        Log.d("sending = ", String.valueOf(MsgFrequencies));
+//         start playing msg
+        for (int freq : MsgFrequencies) {
+            Log.d("sending = ", String.valueOf(freq));
+            this.PlayTone((double) freq, 0.04);
+        }
+
+        // end handshake TODO taimor: check how many times do we really need
+        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
+        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
+        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
+        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
+        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
+        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
+        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
+        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
+        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
+        this.PlayMinimalAmplitude((double) cFrequencyConverter.getEndHandShakeFrequency(), 0.3);
+        MyAudioTrack.release();
+    }
+
 }

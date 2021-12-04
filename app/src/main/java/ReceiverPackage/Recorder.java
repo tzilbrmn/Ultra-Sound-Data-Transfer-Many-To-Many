@@ -31,6 +31,7 @@ public class Recorder {
     //Callback used to set up filled buffer
     private CallBack callback;
 
+
     public boolean isIdle = false;
 
     /**********************************************************************************************
@@ -101,5 +102,9 @@ public class Recorder {
             thread.interrupt();
             thread = null;
         }
+    }
+
+    public boolean getIsIdle() {
+        return isIdle;
     }
 }

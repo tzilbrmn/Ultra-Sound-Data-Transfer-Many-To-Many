@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import FastFourierPackage.Complex;
 import FastFourierPackage.FFT;
+import SenderPackage.Sender;
 import Sound.FrequencyConverter;
 
 import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
@@ -39,7 +40,11 @@ public class Receiver implements CallBack{
     private boolean bIsRecording = true;
     private ArrayList<String> ReceivedMsg;
     private int bufferSizeInBytes;
+    private Sender sender;
 
+    public Receiver() {
+        this.sender = new Sender();
+    }
     /**********************************************************************************************
      * function: receiveMsg
      * description: function to receive msg via sound
@@ -120,10 +125,11 @@ public class Receiver implements CallBack{
         data.remove(0);
         data.remove(data.size() -1);
         String chksum = calcChecksum(data.toString());
-        if (chksum == cFrequencyConverter.getMsgArrayChecksum().toString())
+        if (chksum.equals(cFrequencyConverter.getMsgArrayChecksum().toString()))
             ReceivedMsg = cFrequencyConverter.getMsgArray();
         else
         {
+            sender.sendErrorDetected(settingsArr);
             Log.d("Debug ", "Error receiving the frame.");
         }
         return ReceivedMsg;
@@ -217,5 +223,78 @@ public class Receiver implements CallBack{
     @Override
     public void setBufferSize(int size) {
         bufferSizeInBytes=size;
+    }
+
+
+    public boolean receiveError(Integer[] settingsArr) throws UnsupportedEncodingException {
+        Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND + THREAD_PRIORITY_MORE_FAVORABLE);
+
+        ArrayList<String> Msg = new ArrayList();
+        this.StartFrequency = settingsArr[0];
+        this.EndFrequency = settingsArr[1];
+        int BitsPerTone = settingsArr[2];
+        FrequencyConverter cFrequencyConverter = new FrequencyConverter(StartFrequency, EndFrequency, BitsPerTone);
+        this.Padding = cFrequencyConverter.getPadding();
+        int HandshakeStartFrequency = cFrequencyConverter.getStartHandShakeFrequency();
+        int HandshakeEndFrequency = cFrequencyConverter.getEndHandShakeFrequency();
+
+        recordedArray = new ArrayList<byte[]>();
+        cRecorder = new Recorder();
+        cRecorder.setCallback(this);
+        cRecorder.start();
+        boolean bIsListeningStarted = false;
+        int startHandShakeCounter = 0;
+        int endHandShakeCounter = 0;
+
+        int msgLen = 27;
+        int msgCount = 0;
+
+        while (bIsRecording) {
+            //Wait and get recorded data
+            byte[] NewTone;
+            synchronized (recordedArraySem) {
+                while (recordedArray.isEmpty()) {
+                    try {
+                        recordedArraySem.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                NewTone = recordedArray.remove(0);
+                recordedArraySem.notifyAll();
+            }
+            double NewToneFrequency = calculateFFT(NewTone);
+
+            Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
+
+            if (!bIsListeningStarted) {
+                if ((NewToneFrequency > (HandshakeStartFrequency - this.Padding)) && (NewToneFrequency < (HandshakeStartFrequency + this.Padding))) {
+                    startHandShakeCounter++;
+                    if (startHandShakeCounter >= 2) { // start listening after receiving 2 startHandShakeFrequency received
+                        bIsListeningStarted = true;
+                        Log.d("Debug ", "listening Started");
+                        Log.d("Debug ", String.valueOf(NewToneFrequency));
+                    }
+                } else {
+                    startHandShakeCounter = 0;
+                }
+            }
+            else{ // bIsListeningStarted = true
+                if ((NewToneFrequency > (HandshakeEndFrequency - this.Padding)) && (NewToneFrequency < (HandshakeEndFrequency + this.Padding))) {
+                    endHandShakeCounter++;
+                    if (endHandShakeCounter >= 2) { // stop listening after 2 endHandShakeFrequency received
+                        Log.d("Debug ", "listening End");
+                        Log.d("Debug ", String.valueOf(NewToneFrequency));
+                        StopRecord();
+                    }
+                } else {
+                    endHandShakeCounter = 0;
+                    cFrequencyConverter.calculateBits(NewToneFrequency, false);
+                }
+            }
+        }
+        ReceivedMsg = cFrequencyConverter.getMsgArray();
+
+        return ReceivedMsg.toString().equals("FFF");
     }
 }

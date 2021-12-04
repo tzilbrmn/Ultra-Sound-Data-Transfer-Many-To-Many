@@ -10,6 +10,9 @@ import java.util.ArrayList;
 
 public class NumbersGenerator {
 
+    int minimalPrime;
+    int regularPrime;
+
     int[] MBWP = new int[]{59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163,
             167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293,
             307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443,
@@ -40,12 +43,17 @@ public class NumbersGenerator {
      * @return The MBWP.
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public int calculateMBWP() {
+    public long calculateMBWP() {
         SimpleDateFormat dateAndTimeFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         LocalDateTime ldt = LocalDateTime.now();
+
         long time = Long.parseLong(dateAndTimeFormat.format(ldt));
         int index = (int)time%MBWP.length;
-        return MBWP[index];
+
+        if (index < 0)
+            index += MBWP.length;
+        minimalPrime = MBWP[index];
+        return ((long)minimalPrime)*86; //86 == 1/700 of a minute in milliseconds.
     }
 
     /**
@@ -53,11 +61,12 @@ public class NumbersGenerator {
      * @return The RBWP.
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public int calculateRBWP() {
+    public long calculateRBWP() {
         SimpleDateFormat dateAndTimeFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         LocalDateTime ldt = LocalDateTime.now();
         long time = Long.parseLong(dateAndTimeFormat.format(ldt));
         int index = (int)time%RBWP.length;
-        return RBWP[index];
+        regularPrime = RBWP[index];
+        return (long)(regularPrime*86); //86 == 1/700 of a minute in milliseconds.
     }
 }

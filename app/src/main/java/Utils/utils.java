@@ -67,7 +67,7 @@ public class utils {
             }
             while(bin.length() < 4)
                 bin += '0';
-            //bin = reverse(bin);
+            bin = reverse(bin);
             binRes.append(bin);
         }
         return binRes.toString();
@@ -133,14 +133,14 @@ public class utils {
     public static String binaryToText(String binaryRep){
         StringBuilder sb = new StringBuilder();
         int n = binaryRep.length();
-        for(int i = 0; (i+16) <= n ; i += 16){
-            String binCharCode = binaryRep.substring(i,i+16);
+        for(int i = 0; (i+4) <= n ; i += 4){
+            String binCharCode = binaryRep.substring(i,i+4);
             int charCode = Integer.parseInt(binCharCode, 2);
-            String str = Character.valueOf((char)charCode).toString();
-            sb.append(str);
+            sb.append(charCode);
         }
         return sb.toString();
     }
+
 
     /**
      * converts a binary string back to a byte array
