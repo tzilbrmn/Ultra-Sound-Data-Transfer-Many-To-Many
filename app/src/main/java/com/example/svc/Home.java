@@ -44,6 +44,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
     private TableLayout visitCardsTable;
     Sender cSender;
     TextView txtShowInfo;
+    AddVC addVC;
 
     /**
      * {@inheritDoc}
@@ -56,6 +57,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        addVC = new AddVC(new CommunicationNetwork());
         txtShowInfo = (TextView)findViewById(R.id.txtMyInfo);
         txtShowInfo.setText("in onCreate");
 
@@ -161,7 +163,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void signUp(View v){
+    public void signUp(View v) throws InterruptedException {
         String id = ((EditText)findViewById(R.id.TxtUserId)).getText().toString();  // TAL - need to get from phone
         cSender = new Sender();
         cSender.setUserId(id);
@@ -183,6 +185,16 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
         int lastIndex = userVisitCards.size() - 1;
         txtShowInfo.setText("Info from DB: id- " + userVisitCards.get(lastIndex).getId() + " start date- " + userVisitCards.get(lastIndex).getEncounterStartDate() + " start time- " + userVisitCards.get(lastIndex).getEncounterStartTime());
 
+        addVC.ReceiveVC(); //The call to start the process of transmitting and receiving the frames.
+
+        int i = 0;
+        while(i < 100)
+        {
+            userVisitCards = Encounter.getUserVisitCards(db);
+            lastIndex = userVisitCards.size() - 1;
+            txtShowInfo.setText("Info from DB: id- " + userVisitCards.get(lastIndex).getId() + " start date- " + userVisitCards.get(lastIndex).getEncounterStartDate() + " start time- " + userVisitCards.get(lastIndex).getEncounterStartTime());
+            i++;
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -193,6 +205,10 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
         if (i == 0)
             j = 8;
         txtShowInfo.setText("in onClick");
-        this.signUp(v);
+        try {
+            this.signUp(v);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

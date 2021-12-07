@@ -30,7 +30,7 @@ public class CommunicationNetwork extends Thread {
     public CommunicationNetwork() {
         super("Main");
         this.sem = new Semaphore(1);
-        this.addEncounter = new AddVC();
+        this.addEncounter = new AddVC(this);
         this.ViewVisitCard = new ViewVisitCard();
         this.reciever = new Receiver();
     }
@@ -144,7 +144,7 @@ public class CommunicationNetwork extends Thread {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    protected boolean waitingThread(long timeToWait) throws UnsupportedEncodingException {
+    protected boolean waitingThread(long timeToWait) throws UnsupportedEncodingException, InterruptedException {
 
         if (!recorder.getIsIdle() || canListen) {
 
@@ -164,6 +164,7 @@ public class CommunicationNetwork extends Thread {
             while (canListen) {
                 addEncounter.Listen();
             }
+            timer.join();
             return false;
         }
         else
