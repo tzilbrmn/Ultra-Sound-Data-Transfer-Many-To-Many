@@ -1,8 +1,10 @@
 package com.example.svc;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +16,8 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -57,6 +61,14 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        //get permissions from the user at startup..
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_CONTACTS}, 0);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 0);
+        }
+
         addVC = new AddVC(new CommunicationNetwork());
         txtShowInfo = (TextView)findViewById(R.id.txtMyInfo);
         txtShowInfo.setText("in onCreate");
@@ -64,8 +76,8 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
         db = new SVCDB(this);
 
         //DO THIS ONLY ON DEBUG!!!
-        //db.onUpgrade(db.getReadableDatabase(), 1, 1);
-        //db.dropTable();
+//        db.onUpgrade(db.getReadableDatabase(), 1, 1);
+//        db.dropTable();
 
         Button btn = (Button)findViewById(R.id.signUpBtn);
         btn.setOnClickListener(this);
@@ -170,9 +182,9 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
         //Sign up to the cloud???
         txtShowInfo.setText("in signUp");
 
-
+/*
         //Try to use the DB
-        Encounter enc = new Encounter(id, "2021-03-16", "11:44:36");
+        Encounter enc = new Encounter(id);
 
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -181,19 +193,21 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
         enc.setEncounterDate(dateFormat.format(ldt));
 
         enc.addVC(enc, db);
-
+*/
+        userVisitCards = Encounter.getUserVisitCards(db);
         int lastIndex = userVisitCards.size() - 1;
-        txtShowInfo.setText("Info from DB: id- " + userVisitCards.get(lastIndex).getId() + " start date- " + userVisitCards.get(lastIndex).getEncounterStartDate() + " start time- " + userVisitCards.get(lastIndex).getEncounterStartTime());
-
-        addVC.ReceiveVC(); //The call to start the process of transmitting and receiving the frames.
-
-        int i = 0;
-        while(i < 100)
-        {
-            userVisitCards = Encounter.getUserVisitCards(db);
-            lastIndex = userVisitCards.size() - 1;
+        if (lastIndex > 0) {
             txtShowInfo.setText("Info from DB: id- " + userVisitCards.get(lastIndex).getId() + " start date- " + userVisitCards.get(lastIndex).getEncounterStartDate() + " start time- " + userVisitCards.get(lastIndex).getEncounterStartTime());
-            i++;
+
+            addVC.ReceiveVC(); //The call to start the process of transmitting and receiving the frames.
+
+            int i = 0;
+            while (i < 100) {
+                userVisitCards = Encounter.getUserVisitCards(db);
+                lastIndex = userVisitCards.size() - 1;
+                txtShowInfo.setText("Info from DB: id- " + userVisitCards.get(lastIndex).getId() + " start date- " + userVisitCards.get(lastIndex).getEncounterStartDate() + " start time- " + userVisitCards.get(lastIndex).getEncounterStartTime());
+                i++;
+            }
         }
     }
 

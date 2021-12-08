@@ -268,7 +268,7 @@ public class Receiver implements CallBack{
             Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
 
             if (!bIsListeningStarted) {
-                if ((NewToneFrequency > (HandshakeStartFrequency - this.Padding)) && (NewToneFrequency < (HandshakeStartFrequency + this.Padding))) {
+                if ((NewToneFrequency > (HandshakeStartFrequency - this.Padding)) && (NewToneFrequency < (HandshakeStartFrequency + this.Padding)) && (NewToneFrequency != 17312)) {
                     startHandShakeCounter++;
                     if (startHandShakeCounter >= 2) { // start listening after receiving 2 startHandShakeFrequency received
                         bIsListeningStarted = true;

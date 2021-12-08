@@ -55,8 +55,8 @@ public class SVCDB extends SQLiteOpenHelper {
         //SQLiteDatabase db = new SQLiteDatabase("\db");
 
         db.execSQL(
-                "CREATE TABLE `encounterLog` (" +
-                        "  `encounterId` int AUTO_INCREMENT PRIMARY KEY, " +
+                "CREATE TABLE IF NOT EXISTS `encounterLog` (" +
+                        "  `encounterId` INTEGER PRIMARY KEY, " +
                         "  `id` VARCHAR(255) , " +
                         "  `startDate` VARCHAR(255), " +
                         "  `endDate` VARCHAR(255), " +
@@ -201,11 +201,11 @@ public class SVCDB extends SQLiteOpenHelper {
      * @param id The id of the visit card to delete
      * @return success/failure of the operation.
      */
- /*   public void dropTable() throws SQLiteException{
+    public void dropTable() throws SQLiteException{
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DROP TABLE `encounterLog`;");
     }
-*/
+
 
     /**
      * Gets a list of all the visit cards owned by the given user.

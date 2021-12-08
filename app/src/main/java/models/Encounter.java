@@ -24,10 +24,22 @@ public class Encounter {
     private String encounterEndTime;
 
 
-    public Encounter(String id, String date, String time){
+    public Encounter(String id){
         this.id = id;
-        this.encounterStartDate = date;
-        this.encounterStartTime = time;
+
+        String encounterTime = new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new Date());
+        String encounterDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        this.encounterStartDate = encounterDate;
+        this.encounterStartTime = encounterTime;
+        this.encounterEndDate = encounterStartDate;
+        this.encounterEndTime = encounterStartTime;
+    }
+
+    public Encounter(String id, String encounterDate, String encounterTime){
+        this.id = id;
+        this.encounterStartDate = encounterDate;
+        this.encounterStartTime = encounterTime;
         this.encounterEndDate = encounterStartDate;
         this.encounterEndTime = encounterStartTime;
     }
@@ -165,7 +177,7 @@ public class Encounter {
 
         try{
             System.out.println(en.getId());
-            boolean is_exist = db.VCexists(en.toString());
+            boolean is_exist = db.VCexists(en.getId());
             if(is_exist)
             {
                 Encounter original_encounter = db.getVC(en.getId());

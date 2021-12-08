@@ -79,8 +79,8 @@ public class Recorder {
                 }
                 byte[] buffer = new byte[optimalBufSize];
                 recorder.startRecording();
-                while (thread != null && !thread.isInterrupted() && (recorder.read(buffer, 0, optimalBufSize)) > 0) {
-                    isIdle = true;
+                while (thread != null && !thread.isInterrupted() && (recorder.read(buffer, 0, optimalBufSize)) > 0 && !isIdle) {
+                    isIdle = false;
                     callback.onBufferAvailable(buffer);
                 }
                 recorder.stop();

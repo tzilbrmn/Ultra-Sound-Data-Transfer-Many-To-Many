@@ -7,6 +7,8 @@ import androidx.annotation.RequiresApi;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class NumbersGenerator {
 
@@ -44,10 +46,9 @@ public class NumbersGenerator {
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
     public long calculateMBWP() {
-        SimpleDateFormat dateAndTimeFormat = new SimpleDateFormat("yyyyMMddhhmmss");
-        LocalDateTime ldt = LocalDateTime.now();
+        String ldt = new SimpleDateFormat("hhmmss", Locale.getDefault()).format(new Date());
 
-        long time = Long.parseLong(dateAndTimeFormat.format(ldt));
+        long time = Long.parseLong(ldt);
         int index = (int)time%MBWP.length;
 
         if (index < 0)
@@ -62,9 +63,9 @@ public class NumbersGenerator {
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
     public long calculateRBWP() {
-        SimpleDateFormat dateAndTimeFormat = new SimpleDateFormat("yyyyMMddhhmmss");
-        LocalDateTime ldt = LocalDateTime.now();
-        long time = Long.parseLong(dateAndTimeFormat.format(ldt));
+        String ldt = new SimpleDateFormat("hhmmss", Locale.getDefault()).format(new Date());
+
+        long time = Long.parseLong(ldt);
         int index = (int)time%RBWP.length;
         regularPrime = RBWP[index];
         return (long)(regularPrime*86); //86 == 1/700 of a minute in milliseconds.

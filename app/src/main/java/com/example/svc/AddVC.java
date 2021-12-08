@@ -65,11 +65,11 @@ public class AddVC extends AppCompatActivity {
 
         //try to add the VC, catch possible IllegalArgumentException if any of the mandatory fields is missing. save the VC in the phone book afterwards.
         try {
-            Encounter newVC = new Encounter(id, encounterDate, encounterTime);
-            if(Encounter.addVC(newVC, db)){
+            Encounter newVC = new Encounter(id);
+            Encounter.addVC(newVC, db);
                 //save contact in phone book..
-                saveInPhoneBook(newVC);
-            }
+                //saveInPhoneBook(newVC);
+
         } catch (IllegalArgumentException e) {
         }
     }
@@ -83,13 +83,11 @@ public class AddVC extends AppCompatActivity {
     public void ReceiveVC() throws InterruptedException {
         System.out.println("Receiving...");
         //get recording permission
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 0);
-        }
-        else{
             communicationNetwork.composeFrame("99999999999999999999999");
             communicationNetwork.startProcess();//listen for ultrasound
-        }
+
+
+
 
     }
 
