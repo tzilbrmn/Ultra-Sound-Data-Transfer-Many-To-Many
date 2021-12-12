@@ -59,8 +59,6 @@ public class Receiver implements CallBack{
         int BitsPerTone = settingsArr[2];
         FrequencyConverter cFrequencyConverter = new FrequencyConverter(BitsPerTone);
         this.Padding = cFrequencyConverter.getPadding();
-        int HandshakeStartFrequency = cFrequencyConverter.getStartHandShakeFrequency();
-        int HandshakeEndFrequency = cFrequencyConverter.getEndHandShakeFrequency();
 
         recordedArray = new ArrayList<byte[]>();
         cRecorder = new Recorder();
@@ -236,8 +234,6 @@ public class Receiver implements CallBack{
         int BitsPerTone = settingsArr[2];
         FrequencyConverter cFrequencyConverter = new FrequencyConverter(BitsPerTone);
         this.Padding = cFrequencyConverter.getPadding();
-        int HandshakeStartFrequency = cFrequencyConverter.getStartHandShakeFrequency();
-        int HandshakeEndFrequency = cFrequencyConverter.getEndHandShakeFrequency();
 
         recordedArray = new ArrayList<byte[]>();
         cRecorder = new Recorder();
@@ -247,7 +243,7 @@ public class Receiver implements CallBack{
         int startHandShakeCounter = 0;
         int endHandShakeCounter = 0;
 
-        int msgLen = 27;
+        int msgLen = 3;
         int msgCount = 0;
 
         while (bIsRecording) {
@@ -269,33 +265,28 @@ public class Receiver implements CallBack{
             Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
 
             if (!bIsListeningStarted) {
-                if ((NewToneFrequency > (HandshakeStartFrequency - this.Padding)) && (NewToneFrequency < (HandshakeStartFrequency + this.Padding)) && (NewToneFrequency != 17312)) {
-                    startHandShakeCounter++;
-                    if (startHandShakeCounter >= 2) { // start listening after receiving 2 startHandShakeFrequency received
-                        bIsListeningStarted = true;
-                        Log.d("Debug ", "listening Started");
-                        Log.d("Debug ", String.valueOf(NewToneFrequency));
-                    }
-                } else {
-                    startHandShakeCounter = 0;
+                if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) {
+                    bIsListeningStarted = true;
+                    Log.d("Debug ", "listening Started");
+                    Log.d("Debug ", String.valueOf(NewToneFrequency));
+                    msgCount = 0;
                 }
-            }
-            else{ // bIsListeningStarted = true
-                if ((NewToneFrequency > (HandshakeEndFrequency - this.Padding)) && (NewToneFrequency < (HandshakeEndFrequency + this.Padding))) {
-                    endHandShakeCounter++;
-                    if (endHandShakeCounter >= 2) { // stop listening after 2 endHandShakeFrequency received
-                        Log.d("Debug ", "listening End");
-                        Log.d("Debug ", String.valueOf(NewToneFrequency));
-                        StopRecord();
-                    }
-                } else {
-                    endHandShakeCounter = 0;
-                    cFrequencyConverter.calculateBits(NewToneFrequency, false);
-                }
-            }
-        }
-        ReceivedMsg = cFrequencyConverter.getMsgArray();
+                } else { // bIsListeningStarted = true
+                    if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) {
+                        if (endHandShakeCounter >= 2) { // stop listening after 2 endHandShakeFrequency received
+                            Log.d("Debug ", "listening End");
+                            Log.d("Debug ", String.valueOf(NewToneFrequency));
+                            cFrequencyConverter.calculateBits(NewToneFrequency, false);
+                            msgCount++;
 
-        return ReceivedMsg.toString().equals("FFF");
-    }
+                            if (msgCount >= 3)
+                                StopRecord();
+                        }
+                    }
+                }
+            }
+            ReceivedMsg = cFrequencyConverter.getMsgArray();
+
+            return ReceivedMsg.toString().equals("FFF");
+        }
 }
