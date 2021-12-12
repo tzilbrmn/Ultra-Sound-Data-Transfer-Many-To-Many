@@ -41,7 +41,7 @@ public class Sender {
         EndFrequency = settingsArr[1];
         BitsPerTone = settingsArr[2];
 
-        FrequencyConverter cFrequencyConverter = new FrequencyConverter(BitsPerTone);
+        FrequencyConverter cFrequencyConverter = new FrequencyConverter(StartFrequency, EndFrequency, BitsPerTone);
         ArrayList<Integer> MsgFrequencies = cFrequencyConverter.calculateMessageFrequencies(this.Msg2Send);
 
         int bufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
@@ -199,7 +199,7 @@ public class Sender {
         EndFrequency = settingsArr[1];
         BitsPerTone = settingsArr[2];
 
-        FrequencyConverter cFrequencyConverter = new FrequencyConverter(BitsPerTone);
+        FrequencyConverter cFrequencyConverter = new FrequencyConverter(StartFrequency, EndFrequency, BitsPerTone);
         ArrayList<Integer> MsgFrequencies = cFrequencyConverter.calculateMessageFrequencies("111111111111");
 
         int bufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
