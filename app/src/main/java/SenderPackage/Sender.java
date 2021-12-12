@@ -6,6 +6,8 @@ import android.media.AudioTrack;
 import android.os.Build;
 import android.util.Log;
 
+import com.example.svc.CommunicationNetwork;
+
 import java.util.ArrayList;
 
 import Sound.FrequencyConverter;
@@ -24,8 +26,6 @@ public class Sender {
     private double durationTime = 0.27; // time to play tone -> play on 0.18, optimal on 0.20, best on 0.27
     private int sampleRate = 44100; // Number of samples in 1 second
     private AudioTrack MyAudioTrack = null;
-    private int StartFrequency;
-    private int EndFrequency;
     private int BitsPerTone;
 
     public String userId;
@@ -37,11 +37,9 @@ public class Sender {
      * return: void
      **********************************************************************************************/
     public void sendMsg(Integer[] settingsArr) {
-        StartFrequency = settingsArr[0];
-        EndFrequency = settingsArr[1];
         BitsPerTone = settingsArr[2];
 
-        FrequencyConverter cFrequencyConverter = new FrequencyConverter(StartFrequency, EndFrequency, BitsPerTone);
+        FrequencyConverter cFrequencyConverter = new FrequencyConverter(BitsPerTone);
         ArrayList<Integer> MsgFrequencies = cFrequencyConverter.calculateMessageFrequencies(this.Msg2Send);
 
         int bufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
@@ -55,13 +53,6 @@ public class Sender {
         int NumOfHandShakes = 4;
         int NumOfTones = MsgFrequencies.size() + NumOfHandShakes;
 
-        // start handshake
-        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
         Log.d("sending = ", String.valueOf(MsgFrequencies));
 //         start playing msg
         for (int freq : MsgFrequencies) {
@@ -69,17 +60,6 @@ public class Sender {
             this.PlayTone((double) freq, 0.04);
         }
 
-        // end handshake TODO taimor: check how many times do we really need
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayMinimalAmplitude((double) cFrequencyConverter.getEndHandShakeFrequency(), 0.3);
         MyAudioTrack.release();
     }
 
@@ -195,12 +175,10 @@ public class Sender {
     public String getUserId() { return userId; }
 
     public void sendErrorDetected(Integer[] settingsArr) {
-        StartFrequency = settingsArr[0];
-        EndFrequency = settingsArr[1];
         BitsPerTone = settingsArr[2];
 
-        FrequencyConverter cFrequencyConverter = new FrequencyConverter(StartFrequency, EndFrequency, BitsPerTone);
-        ArrayList<Integer> MsgFrequencies = cFrequencyConverter.calculateMessageFrequencies("111111111111");
+        FrequencyConverter cFrequencyConverter = new FrequencyConverter( BitsPerTone);
+        ArrayList<Integer> MsgFrequencies = cFrequencyConverter.calculateMessageFrequencies(this.Msg2Send);
 
         int bufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
         MyAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize, AudioTrack.MODE_STREAM);
@@ -213,13 +191,6 @@ public class Sender {
         int NumOfHandShakes = 4;
         int NumOfTones = MsgFrequencies.size() + NumOfHandShakes;
 
-        // start handshake
-        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getStartHandShakeFrequency(), this.durationTime);
         Log.d("sending = ", String.valueOf(MsgFrequencies));
 //         start playing msg
         for (int freq : MsgFrequencies) {
@@ -227,17 +198,6 @@ public class Sender {
             this.PlayTone((double) freq, 0.04);
         }
 
-        // end handshake TODO taimor: check how many times do we really need
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayTone((double) cFrequencyConverter.getEndHandShakeFrequency(), this.durationTime);
-        this.PlayMinimalAmplitude((double) cFrequencyConverter.getEndHandShakeFrequency(), 0.3);
         MyAudioTrack.release();
     }
 

@@ -207,5 +207,9 @@ public class CommunicationNetwork extends Thread {
             return false;
         }
     }
+
+
+    public String getFrame() { return frame; }
+
 }
 

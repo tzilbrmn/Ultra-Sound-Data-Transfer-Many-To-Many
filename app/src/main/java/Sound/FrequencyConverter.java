@@ -18,11 +18,7 @@ import java.util.Map;
 public class FrequencyConverter {
 
     private int BitsPerTone;
-    private int startFrequency;
-    private int endFrequency;
     private int padding;
-    private int StartHandShakeFrequency;
-    private int EndHandShakeFrequency;
     private ArrayList<Byte> readBytes;
     private byte currByte;
     private int currShift;
@@ -38,13 +34,9 @@ public class FrequencyConverter {
      * args: int startFrequency, int endFrequency, int numberOfBitsInOneTone
      **********************************************************************************************/
     // Tal & Ariela - Can change numberOfBitsInOneTone to hardcoded size of msg
-    public FrequencyConverter(int startFrequency, int endFrequency, int numberOfBitsInOneTone){
+    public FrequencyConverter(int numberOfBitsInOneTone){
         this.BitsPerTone=numberOfBitsInOneTone;
         this.padding= 100;
-        this.startFrequency=17600;
-        this.endFrequency=19200;
-        this.StartHandShakeFrequency = 17400;//17400
-        this.EndHandShakeFrequency = 19300;//19300
         readBytes=new ArrayList<Byte>();
         currByte=0x00;
         currShift=0;
@@ -232,25 +224,6 @@ public class FrequencyConverter {
         return this.padding;
     }
 
-    /**********************************************************************************************
-     * function: getHandshakeStartFreq
-     * description: getter function to send StartHandShakeFrequency
-     * args:
-     * return: int
-     **********************************************************************************************/
-    public int getStartHandShakeFrequency() {
-        return this.StartHandShakeFrequency;
-    }
-
-    /**********************************************************************************************
-     * function: getHandshakeEndFreq
-     * description: getter function to send EndHandShakeFrequency
-     * args:
-     * return: int
-     **********************************************************************************************/
-    public int getEndHandShakeFrequency() {
-        return this.EndHandShakeFrequency;
-    }
 
     /**********************************************************************************************
      * function: getMsgArray
