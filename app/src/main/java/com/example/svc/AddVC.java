@@ -52,6 +52,11 @@ public class AddVC extends AppCompatActivity {
         communicationNetwork = cm;
     }
 
+    public AddVC() {
+        db = new SVCDB(this);
+        communicationNetwork = new CommunicationNetwork();
+    }
+
     /**
      * the onClick method of the <i>Add</i> button.
      * gets all the values from the textFields, validates the input (displays alert if there's an error), adds the VC to the DB, and saves it in the phone book.

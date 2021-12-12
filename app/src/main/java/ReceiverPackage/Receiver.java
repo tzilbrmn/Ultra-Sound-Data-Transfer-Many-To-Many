@@ -57,7 +57,7 @@ public class Receiver implements CallBack{
         this.StartFrequency = settingsArr[0];
         this.EndFrequency = settingsArr[1];
         int BitsPerTone = settingsArr[2];
-        FrequencyConverter cFrequencyConverter = new FrequencyConverter(StartFrequency, EndFrequency, BitsPerTone);
+        FrequencyConverter cFrequencyConverter = new FrequencyConverter(BitsPerTone);
         this.Padding = cFrequencyConverter.getPadding();
         int HandshakeStartFrequency = cFrequencyConverter.getStartHandShakeFrequency();
         int HandshakeEndFrequency = cFrequencyConverter.getEndHandShakeFrequency();
@@ -92,33 +92,34 @@ public class Receiver implements CallBack{
             Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
 
             if (!bIsListeningStarted) {
-                if ((NewToneFrequency > (HandshakeStartFrequency - this.Padding)) && (NewToneFrequency < (HandshakeStartFrequency + this.Padding))) {
-                    startHandShakeCounter++;
-                    if (startHandShakeCounter >= 2) { // start listening after receiving 2 startHandShakeFrequency received
-                        bIsListeningStarted = true;
-                        Log.d("Debug ", "listening Started");
-                        Log.d("Debug ", String.valueOf(NewToneFrequency));
-                    }
-                } else {
-                    startHandShakeCounter = 0;
+                if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) { //If we hear 'F'
+                    bIsListeningStarted = true;
+                    Log.d("Debug ", "listening Started");
+                    Log.d("Debug ", String.valueOf(NewToneFrequency));
+                    cFrequencyConverter = new FrequencyConverter(BitsPerTone);
+                    cFrequencyConverter.calculateBits(NewToneFrequency, false);
+                    msgCount = 1;
                 }
             }
-            else{ // bIsListeningStarted = true
-                if ((NewToneFrequency > (HandshakeEndFrequency - this.Padding)) && (NewToneFrequency < (HandshakeEndFrequency + this.Padding))) {
-                    endHandShakeCounter++;
+            else { // bIsListeningStarted = true
+                if ((NewToneFrequency > 17600) && (NewToneFrequency < 19200)) {
                     if (endHandShakeCounter >= 2) { // stop listening after 2 endHandShakeFrequency received
                         Log.d("Debug ", "listening End");
                         Log.d("Debug ", String.valueOf(NewToneFrequency));
-                        StopRecord();
+
+                        if (msgCount < 25) {
+                            cFrequencyConverter.calculateBits(NewToneFrequency, false);
+                            msgCount++;
+                        } else if (msgCount >= 27)
+                            StopRecord();
+                        else {
+                            cFrequencyConverter.calculateBits(NewToneFrequency, true);
+                            msgCount++;
+                        }
                     }
-                } else {
-                    endHandShakeCounter = 0;
-                    if (msgCount < 25) {
-                        cFrequencyConverter.calculateBits(NewToneFrequency, false);
-                    }
-                    else
-                        cFrequencyConverter.calculateBits(NewToneFrequency, true);
                 }
+                else
+                    StopRecord();
             }
         }
         ArrayList<String> data = cFrequencyConverter.getMsgArrayNoChecksum();
@@ -233,7 +234,7 @@ public class Receiver implements CallBack{
         this.StartFrequency = settingsArr[0];
         this.EndFrequency = settingsArr[1];
         int BitsPerTone = settingsArr[2];
-        FrequencyConverter cFrequencyConverter = new FrequencyConverter(StartFrequency, EndFrequency, BitsPerTone);
+        FrequencyConverter cFrequencyConverter = new FrequencyConverter(BitsPerTone);
         this.Padding = cFrequencyConverter.getPadding();
         int HandshakeStartFrequency = cFrequencyConverter.getStartHandShakeFrequency();
         int HandshakeEndFrequency = cFrequencyConverter.getEndHandShakeFrequency();

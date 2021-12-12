@@ -38,7 +38,7 @@ public class FrequencyConverter {
      * args: int startFrequency, int endFrequency, int numberOfBitsInOneTone
      **********************************************************************************************/
     // Tal & Ariela - Can change numberOfBitsInOneTone to hardcoded size of msg
-    public FrequencyConverter(int startFrequency, int endFrequency, int numberOfBitsInOneTone){
+    public FrequencyConverter(int numberOfBitsInOneTone){
         this.BitsPerTone=numberOfBitsInOneTone;
         this.padding= 100;
         this.startFrequency=17600;

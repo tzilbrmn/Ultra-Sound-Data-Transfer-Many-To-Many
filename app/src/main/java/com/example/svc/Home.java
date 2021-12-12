@@ -195,11 +195,13 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
         enc.addVC(enc, db);
 */
         userVisitCards = Encounter.getUserVisitCards(db);
-        int lastIndex = userVisitCards.size() - 1;
+        addVC.ReceiveVC(); //The call to start the process of transmitting and receiving the frames.
+        try {
+            int lastIndex = userVisitCards.size() - 1;
+
         if (lastIndex > 0) {
             txtShowInfo.setText("Info from DB: id- " + userVisitCards.get(lastIndex).getId() + " start date- " + userVisitCards.get(lastIndex).getEncounterStartDate() + " start time- " + userVisitCards.get(lastIndex).getEncounterStartTime());
 
-            addVC.ReceiveVC(); //The call to start the process of transmitting and receiving the frames.
 
             int i = 0;
             while (i < 100) {
@@ -208,7 +210,10 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
                 txtShowInfo.setText("Info from DB: id- " + userVisitCards.get(lastIndex).getId() + " start date- " + userVisitCards.get(lastIndex).getEncounterStartDate() + " start time- " + userVisitCards.get(lastIndex).getEncounterStartTime());
                 i++;
             }
+
         }
+        }
+        catch (Exception e) {}
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
