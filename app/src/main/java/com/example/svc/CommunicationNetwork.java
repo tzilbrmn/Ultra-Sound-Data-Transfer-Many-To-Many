@@ -181,7 +181,7 @@ public class CommunicationNetwork extends Thread {
             while (canListen) {
                 addEncounter.Listen();
             }
-            timer.join(); //Test
+            timer.join();
             return false;
         }
         else
