@@ -12,6 +12,10 @@ import ReceiverPackage.Recorder;
 import Utils.NumbersGenerator;
 
 public class CommunicationNetwork extends Thread {
+    public void setFrame(String frame) {
+        this.frame = frame;
+    }
+
     String frame;
     Recorder recorder;
     Receiver reciever;
@@ -22,6 +26,10 @@ public class CommunicationNetwork extends Thread {
 
     Semaphore sem;
     String threadName;
+
+    public boolean isCanListen() {
+        return canListen;
+    }
 
     boolean canListen = true;
     boolean errorTimeOut = false;
@@ -101,19 +109,17 @@ public class CommunicationNetwork extends Thread {
         RBWP = numGen.calculateRBWP();
 
         CommunicationNetwork listeningThread = new CommunicationNetwork("Listen");
-        CommunicationNetwork transmittingThread = new CommunicationNetwork("Transmit");
+        listeningThread.setFrame(this.frame);
+//        CommunicationNetwork transmittingThread = new CommunicationNetwork("Transmit");
+//       transmittingThread.setFrame(this.frame);
 
         // stating threads A and B
         listeningThread.start();
-        transmittingThread.start();
+//        transmittingThread.start();
 
         // waiting for threads A and B
         listeningThread.join();
-        transmittingThread.join();
-    }
-
-    protected void sendMsg() {
-
+//        transmittingThread.join();
     }
 
 
@@ -122,31 +128,34 @@ public class CommunicationNetwork extends Thread {
     public void run() {
 
         // run by thread A
-        if (this.getName().equals("Listen")) {
+       while (true) {
             try {
-                boolean succedded = false;
-                sem.acquire();
+                boolean succeded = false;
+//                sem.acquire();
                 if (!waitingThread(MBWP))
                     waitingThread(RBWP);
                 do {
-                    succedded = waitingThread(MBWP);
-                } while (!succedded);
+                    succeded = waitingThread(MBWP);  //Succeeded  == The frame was sent correctly
+                } while (!succeded);
             } catch (InterruptedException | UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }
-        // run by thread B
+/*        // run by thread B
         else {
             try {
                 // acquiring the lock
                 sem.acquire();
 
-
+                Integer[] SettingsArr = Utils.SoundSettings.getSettings();
+                ViewVisitCard.Send(frame);
 
             } catch (InterruptedException exc) {
                 System.out.println(exc);
             }
         }
+
+ */
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -177,7 +186,7 @@ public class CommunicationNetwork extends Thread {
         {
             if (!canListen)
             {
-                sem.release();
+//                sem.release();
                 ViewVisitCard.Send(frame);
 
                 Thread errorTime = new Thread() {
@@ -193,6 +202,7 @@ public class CommunicationNetwork extends Thread {
                     }
                 };
 
+                errorTime.start();
                 while (errorTimeOut)
                 {
                     Integer[] SettingsArr = Utils.SoundSettings.getSettings();
@@ -201,6 +211,7 @@ public class CommunicationNetwork extends Thread {
                         ViewVisitCard.Send(frame);
                     }
                 }
+                errorTime.join();
                 canListen = true;
                 return true;
             }

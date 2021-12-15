@@ -98,7 +98,7 @@ public class Recorder {
      **********************************************************************************************/
     public void stop() {
         if (thread != null) {
-            isIdle = false;
+            isIdle = true;
             thread.interrupt();
             thread = null;
         }
