@@ -42,9 +42,11 @@ public class CommunicationNetwork extends Thread {
         this.ViewVisitCard = new ViewVisitCard();
         this.reciever = new Receiver();
         this.recorder = new Recorder();
+
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public CommunicationNetwork(String threadName) {
         super(threadName);
         this.threadName = threadName;
@@ -53,6 +55,10 @@ public class CommunicationNetwork extends Thread {
         this.ViewVisitCard = new ViewVisitCard();
         this.reciever = new Receiver();
         this.recorder = new Recorder();
+
+        this.numGen = new NumbersGenerator();
+        MBWP = numGen.calculateMBWP();
+        RBWP = numGen.calculateRBWP();
     }
 
     final private String listeningSemaphore = "Semaphore";
@@ -104,10 +110,6 @@ public class CommunicationNetwork extends Thread {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void startProcess() throws InterruptedException {
-        this.numGen = new NumbersGenerator();
-        MBWP = numGen.calculateMBWP();
-        RBWP = numGen.calculateRBWP();
-
         CommunicationNetwork listeningThread = new CommunicationNetwork("Listen");
         listeningThread.setFrame(this.frame);
 //        CommunicationNetwork transmittingThread = new CommunicationNetwork("Transmit");
