@@ -105,11 +105,9 @@ public class AddVC extends AppCompatActivity {
         Integer[] SettingsArr = Utils.SoundSettings.getSettings();
         try {
             ArrayList<String> ReceivedMsg = cReceiver.receiveMsg(SettingsArr, communicationNetwork);
-            if (ReceivedMsg != null) {
-                String binaryRep = Utils.utils.concatArrayList(ReceivedMsg);
-                Encounter receivedVC = Encounter.receiveVisitCard(binaryRep);
-                Encounter.addVC(receivedVC, db);
-            }
+            String binaryRep = Utils.utils.concatArrayList(ReceivedMsg);
+            Encounter receivedVC = Encounter.receiveVisitCard(binaryRep);
+            Encounter.addVC(receivedVC, db);
 
         } catch (UnsupportedEncodingException | IllegalArgumentException | IndexOutOfBoundsException e) {
             e.printStackTrace();
