@@ -48,6 +48,7 @@ public class CommunicationNetwork extends Thread {
         this.recorder = new Recorder();
     }
 
+    
     final private String listeningSemaphore = "Semaphore";
 
     /**
@@ -230,5 +231,9 @@ public class CommunicationNetwork extends Thread {
 
     public String getFrame() { return frame; }
     public void setFrame(String newFrame) { this.frame = newFrame; }
+
+    public boolean isCanListen() {
+        return canListen;
+    }
 }
 

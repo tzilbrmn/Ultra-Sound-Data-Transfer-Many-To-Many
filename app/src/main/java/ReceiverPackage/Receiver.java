@@ -16,6 +16,8 @@ import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
 import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
 import static com.example.svc.CommunicationNetwork.calcChecksum;
 
+import com.example.svc.CommunicationNetwork;
+
 /**********************************************************************************************
  * Class: Receiver
  * Description:
@@ -41,6 +43,7 @@ public class Receiver implements CallBack{
     private ArrayList<String> ReceivedMsg;
     private int bufferSizeInBytes;
     private Sender sender;
+    private CommunicationNetwork communicationNet;
 
     public Receiver() {
         this.sender = new Sender();
@@ -51,7 +54,7 @@ public class Receiver implements CallBack{
      * args: settingsArr
      * return: ArrayList<String>
      **********************************************************************************************/
-    public ArrayList<String> receiveMsg(Integer[] settingsArr) throws UnsupportedEncodingException {
+    public ArrayList<String> receiveMsg(Integer[] settingsArr, CommunicationNetwork cm) throws UnsupportedEncodingException {
         Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND + THREAD_PRIORITY_MORE_FAVORABLE);
 
         this.StartFrequency = settingsArr[0];
@@ -59,6 +62,7 @@ public class Receiver implements CallBack{
         int BitsPerTone = settingsArr[2];
         FrequencyConverter cFrequencyConverter = new FrequencyConverter(BitsPerTone);
         this.Padding = cFrequencyConverter.getPadding();
+        this.communicationNet = cm;
 
         recordedArray = new ArrayList<byte[]>();
         cRecorder = new Recorder();
@@ -87,10 +91,9 @@ public class Receiver implements CallBack{
             }
             double NewToneFrequency = calculateFFT(NewTone);
 
-            Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
-
-            if (!bIsListeningStarted) {
+            if (!bIsListeningStarted && cm.isCanListen()) {
                 if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) { //If we hear 'F'
+                    Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
                     bIsListeningStarted = true;
                     Log.d("Debug ", "listening Started");
                     Log.d("Debug ", String.valueOf(NewToneFrequency));
@@ -101,19 +104,18 @@ public class Receiver implements CallBack{
             }
             else { // bIsListeningStarted = true
                 if ((NewToneFrequency > 17600) && (NewToneFrequency < 19200)) {
-                   // if (endHandShakeCounter >= 2) { // stop listening after 2 endHandShakeFrequency received
-                        if (msgCount < 25) {
-                            cFrequencyConverter.calculateBits(NewToneFrequency, false);
-                            msgCount++;
-                        } else if (msgCount >= 27) {
-                            StopRecord();
-                            Log.d("Debug ", "listening End");
-                            Log.d("Debug ", String.valueOf(NewToneFrequency));
-
-                        }
-                        else {
-                            cFrequencyConverter.calculateBits(NewToneFrequency, true);
-                            msgCount++;
+                    Log.d("Debug 3 new", String.valueOf(NewToneFrequency));
+                    if (msgCount < 25) {
+                        cFrequencyConverter.calculateBits(NewToneFrequency, false);
+                        msgCount++;
+                    } else if (msgCount >= 27) {
+                        Log.d("Debug ", "listening End");
+                        Log.d("Debug ", String.valueOf(NewToneFrequency));
+                        StopRecord();
+                    }
+                    else {
+                        cFrequencyConverter.calculateBits(NewToneFrequency, true);
+                        msgCount++;
                         }
                    // }
                 }
