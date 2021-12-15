@@ -185,7 +185,7 @@ public class CommunicationNetwork extends Thread {
                 Log.d("Debug ", "Start listening");
                 addEncounter.Listen();
             }
-            timer.join();
+            timer.join(); //Test
             return false;
         }
         else
