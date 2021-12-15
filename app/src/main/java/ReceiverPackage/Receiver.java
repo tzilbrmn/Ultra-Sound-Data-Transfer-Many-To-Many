@@ -32,8 +32,6 @@ public class Receiver implements CallBack{
 
     private int SampleRate = 44100;
     private double durationTime = 0.27;
-    private int StartFrequency;
-    private int EndFrequency;
     private int Padding;
     private AudioTrack cAudioTrack = null;
     private Recorder cRecorder = null;
@@ -54,13 +52,10 @@ public class Receiver implements CallBack{
      * args: settingsArr
      * return: ArrayList<String>
      **********************************************************************************************/
-    public ArrayList<String> receiveMsg(Integer[] settingsArr, CommunicationNetwork cm) throws UnsupportedEncodingException {
+    public ArrayList<String> receiveMsg(CommunicationNetwork cm) throws UnsupportedEncodingException {
         Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND + THREAD_PRIORITY_MORE_FAVORABLE);
 
-        this.StartFrequency = settingsArr[0];
-        this.EndFrequency = settingsArr[1];
-        int BitsPerTone = settingsArr[2];
-        FrequencyConverter cFrequencyConverter = new FrequencyConverter(BitsPerTone);
+        FrequencyConverter cFrequencyConverter = new FrequencyConverter();
         this.Padding = cFrequencyConverter.getPadding();
         this.communicationNet = cm;
 
@@ -97,7 +92,7 @@ public class Receiver implements CallBack{
                     bIsListeningStarted = true;
                     Log.d("Debug ", "listening Started");
                     Log.d("Debug ", String.valueOf(NewToneFrequency));
-                    cFrequencyConverter = new FrequencyConverter(BitsPerTone);
+                    cFrequencyConverter = new FrequencyConverter();
                     cFrequencyConverter.calculateBits(NewToneFrequency, false);
                     msgCount = 1;
                 }
@@ -131,7 +126,7 @@ public class Receiver implements CallBack{
             ReceivedMsg = cFrequencyConverter.getMsgArray();
         else
         {
-            sender.sendErrorDetected(settingsArr);
+            sender.sendErrorDetected();
             Log.d("Debug ", "Error receiving the frame.");
         }
         return ReceivedMsg;
@@ -228,14 +223,11 @@ public class Receiver implements CallBack{
     }
 
 
-    public boolean receiveError(Integer[] settingsArr) throws UnsupportedEncodingException {
+    public boolean receiveError() throws UnsupportedEncodingException {
         Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND + THREAD_PRIORITY_MORE_FAVORABLE);
 
         ArrayList<String> Msg = new ArrayList();
-        this.StartFrequency = settingsArr[0];
-        this.EndFrequency = settingsArr[1];
-        int BitsPerTone = settingsArr[2];
-        FrequencyConverter cFrequencyConverter = new FrequencyConverter(BitsPerTone);
+        FrequencyConverter cFrequencyConverter = new FrequencyConverter();
         this.Padding = cFrequencyConverter.getPadding();
 
         recordedArray = new ArrayList<byte[]>();

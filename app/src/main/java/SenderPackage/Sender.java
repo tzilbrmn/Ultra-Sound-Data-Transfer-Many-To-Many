@@ -26,7 +26,6 @@ public class Sender {
     private double durationTime = 0.27; // time to play tone -> play on 0.18, optimal on 0.20, best on 0.27
     private int sampleRate = 44100; // Number of samples in 1 second
     private AudioTrack MyAudioTrack = null;
-    private int BitsPerTone;
 
     public String userId;
 
@@ -36,10 +35,9 @@ public class Sender {
      * args: settingsArr
      * return: void
      **********************************************************************************************/
-    public void sendMsg(Integer[] settingsArr) {
-        BitsPerTone = settingsArr[2];
+    public void sendMsg() {
 
-        FrequencyConverter cFrequencyConverter = new FrequencyConverter(BitsPerTone);
+        FrequencyConverter cFrequencyConverter = new FrequencyConverter();
         ArrayList<Integer> MsgFrequencies = cFrequencyConverter.calculateMessageFrequencies(this.Msg2Send);
 
         int bufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
@@ -174,10 +172,9 @@ public class Sender {
 
     public String getUserId() { return userId; }
 
-    public void sendErrorDetected(Integer[] settingsArr) {
-        BitsPerTone = settingsArr[2];
+    public void sendErrorDetected() {
 
-        FrequencyConverter cFrequencyConverter = new FrequencyConverter( BitsPerTone);
+        FrequencyConverter cFrequencyConverter = new FrequencyConverter();
         ArrayList<Integer> MsgFrequencies = cFrequencyConverter.calculateMessageFrequencies(errMsg2Send);
 
         Log.d("Debug", "Sending error msg");

@@ -102,9 +102,8 @@ public class AddVC extends AppCompatActivity {
      */
     public void Listen() {
         Receiver cReceiver = new Receiver();
-        Integer[] SettingsArr = Utils.SoundSettings.getSettings();
         try {
-            ArrayList<String> ReceivedMsg = cReceiver.receiveMsg(SettingsArr, communicationNetwork);
+            ArrayList<String> ReceivedMsg = cReceiver.receiveMsg(communicationNetwork);
             if (ReceivedMsg != null) {
                 String binaryRep = Utils.utils.concatArrayList(ReceivedMsg);
                 Encounter receivedVC = Encounter.receiveVisitCard(binaryRep);

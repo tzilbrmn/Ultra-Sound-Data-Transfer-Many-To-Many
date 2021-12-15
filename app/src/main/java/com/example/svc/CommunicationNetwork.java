@@ -215,8 +215,7 @@ public class CommunicationNetwork extends Thread {
                 errorTime.start();
                 while (errorTimeOut)
                 {
-                    Integer[] SettingsArr = Utils.SoundSettings.getSettings();
-                    if (reciever.receiveError(SettingsArr))
+                    if (reciever.receiveError())
                     {
                         ViewVisitCard.Send(frame);
                     }

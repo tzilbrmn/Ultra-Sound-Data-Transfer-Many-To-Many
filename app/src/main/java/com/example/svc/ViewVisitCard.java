@@ -83,9 +83,8 @@ public class ViewVisitCard extends AppCompatActivity {
         if (!binaryRep.isEmpty() && !binaryRep.equals("")) {
             Sender cSender = new Sender();
             cSender.setMsg2Send(binaryRep);
-            Integer[] SettingsArr = Utils.SoundSettings.getSettings();
             //TODO Rani: add Alert with progress bar
-            cSender.sendMsg(SettingsArr);
+            cSender.sendMsg();
         }
     }
 }

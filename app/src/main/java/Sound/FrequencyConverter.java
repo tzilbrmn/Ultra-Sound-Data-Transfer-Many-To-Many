@@ -17,7 +17,6 @@ import java.util.Map;
  **********************************************************************************************/
 public class FrequencyConverter {
 
-    private int BitsPerTone;
     private int padding;
     private ArrayList<Byte> readBytes;
     private byte currByte;
@@ -34,8 +33,7 @@ public class FrequencyConverter {
      * args: int startFrequency, int endFrequency, int numberOfBitsInOneTone
      **********************************************************************************************/
     // Tal & Ariela - Can change numberOfBitsInOneTone to hardcoded size of msg
-    public FrequencyConverter(int numberOfBitsInOneTone){
-        this.BitsPerTone=numberOfBitsInOneTone;
+    public FrequencyConverter(){
         this.padding= 100;
         readBytes=new ArrayList<Byte>();
         currByte=0x00;
