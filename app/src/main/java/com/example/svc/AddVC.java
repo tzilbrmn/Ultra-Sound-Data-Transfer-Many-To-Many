@@ -90,10 +90,6 @@ public class AddVC extends AppCompatActivity {
         //get recording permission
             communicationNetwork.composeFrame("99999999999999999999999");
             communicationNetwork.startProcess();//listen for ultrasound
-
-
-
-
     }
 
     /**
@@ -108,7 +104,7 @@ public class AddVC extends AppCompatActivity {
         Receiver cReceiver = new Receiver();
         Integer[] SettingsArr = Utils.SoundSettings.getSettings();
         try {
-            ArrayList<String> ReceivedMsg = cReceiver.receiveMsg(SettingsArr);
+            ArrayList<String> ReceivedMsg = cReceiver.receiveMsg(SettingsArr, communicationNetwork);
             String binaryRep = Utils.utils.concatArrayList(ReceivedMsg);
             Encounter receivedVC = Encounter.receiveVisitCard(binaryRep);
             Encounter.addVC(receivedVC, db);

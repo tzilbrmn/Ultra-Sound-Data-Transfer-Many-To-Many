@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.RequiresApi;
@@ -76,6 +77,7 @@ public class ViewVisitCard extends AppCompatActivity {
      * @param frame Frame to send.
      */
     public void Send(String frame){
+        Log.d("debug", "Send on ViewVisitCard");
         String binaryRep = Utils.utils.strToBinary(frame);
 
         if (!binaryRep.isEmpty() && !binaryRep.equals(" ")) {
