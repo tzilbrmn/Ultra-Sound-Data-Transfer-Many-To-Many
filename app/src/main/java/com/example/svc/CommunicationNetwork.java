@@ -1,6 +1,7 @@
 package com.example.svc;
 
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -40,7 +41,7 @@ public class CommunicationNetwork extends Thread {
     public CommunicationNetwork(String threadName) {
         super(threadName);
         this.threadName = threadName;
-        this.sem = new Semaphore(1);
+        //this.sem = new Semaphore(1);
         this.addEncounter = new AddVC(this);
         this.ViewVisitCard = new ViewVisitCard();
         this.reciever = new Receiver();
@@ -65,9 +66,11 @@ public class CommunicationNetwork extends Thread {
 
         if (frame.length() == 27) {
             frame = Utils.utils.strToBinary(frame);
+            Log.d("Debug ", "composeFrame Succeeded");
             this.frame = frame;
             return true;
         }
+        Log.d("Debug ", "composeFrame failed");
         return false;
     }
 
@@ -90,7 +93,7 @@ public class CommunicationNetwork extends Thread {
             len = len - 1;
         }
         String checkSum = Integer.toHexString(num);
-
+        Log.d("Debug ", "calculate chackSumS");
         return checkSum;
     }
 
@@ -99,22 +102,22 @@ public class CommunicationNetwork extends Thread {
         this.numGen = new NumbersGenerator();
         MBWP = numGen.calculateMBWP();
         RBWP = numGen.calculateRBWP();
+        Log.d("Debug ", "startProcess");
 
         CommunicationNetwork listeningThread = new CommunicationNetwork("Listen");
-        CommunicationNetwork transmittingThread = new CommunicationNetwork("Transmit");
+        listeningThread.setFrame(this.frame);
+      //  CommunicationNetwork transmittingThread = new CommunicationNetwork("Transmit");
+      //  transmittingThread.setFrame(this.frame);
 
         // stating threads A and B
+      //  transmittingThread.start();
         listeningThread.start();
-        transmittingThread.start();
 
         // waiting for threads A and B
         listeningThread.join();
-        transmittingThread.join();
+       // transmittingThread.join();
     }
 
-    protected void sendMsg() {
-
-    }
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -122,10 +125,11 @@ public class CommunicationNetwork extends Thread {
     public void run() {
 
         // run by thread A
-        if (this.getName().equals("Listen")) {
+        //if (this.getName().equals("Listen")) {
+        while(true){
             try {
                 boolean succedded = false;
-                sem.acquire();
+                //sem.acquire();
                 if (!waitingThread(MBWP))
                     waitingThread(RBWP);
                 do {
@@ -136,17 +140,27 @@ public class CommunicationNetwork extends Thread {
             }
         }
         // run by thread B
-        else {
+        /*else {
             try {
                 // acquiring the lock
                 sem.acquire();
 
+                Integer[] SettingsArr = Utils.SoundSettings.getSettings();
+                if (frame == null) {
+                    sem.release();
+                    Log.d("Debug ", "Frame fail. Trying again");
+                } else {
+
+                    ViewVisitCard.Send(frame);
+                    waitingThread(RBWP);
+                }
 
 
-            } catch (InterruptedException exc) {
+            } catch (InterruptedException | UnsupportedEncodingException exc) {
                 System.out.println(exc);
             }
-        }
+
+        }*/
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -168,6 +182,7 @@ public class CommunicationNetwork extends Thread {
             timer.start();
 
             while (canListen) {
+                Log.d("Debug ", "Start listening");
                 addEncounter.Listen();
             }
             timer.join();
@@ -177,13 +192,15 @@ public class CommunicationNetwork extends Thread {
         {
             if (!canListen)
             {
-                sem.release();
+                //sem.release();
+                Log.d("Debug ", "Start transmitting");
                 ViewVisitCard.Send(frame);
 
                 Thread errorTime = new Thread() {
                     @Override
                     public void run() {
                         try {
+                            Log.d("Debug ", "Listen for errors");
                             errorTimeOut = true;
                             Thread.sleep(2000);
                             errorTimeOut = false;
@@ -193,6 +210,7 @@ public class CommunicationNetwork extends Thread {
                     }
                 };
 
+                errorTime.start();
                 while (errorTimeOut)
                 {
                     Integer[] SettingsArr = Utils.SoundSettings.getSettings();
@@ -201,6 +219,7 @@ public class CommunicationNetwork extends Thread {
                         ViewVisitCard.Send(frame);
                     }
                 }
+                errorTime.join();
                 canListen = true;
                 return true;
             }
@@ -210,6 +229,6 @@ public class CommunicationNetwork extends Thread {
 
 
     public String getFrame() { return frame; }
-
+    public void setFrame(String newFrame) { this.frame = newFrame; }
 }
 

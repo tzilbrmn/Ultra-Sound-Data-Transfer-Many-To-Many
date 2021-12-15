@@ -101,28 +101,29 @@ public class Receiver implements CallBack{
             }
             else { // bIsListeningStarted = true
                 if ((NewToneFrequency > 17600) && (NewToneFrequency < 19200)) {
-                    if (endHandShakeCounter >= 2) { // stop listening after 2 endHandShakeFrequency received
-                        Log.d("Debug ", "listening End");
-                        Log.d("Debug ", String.valueOf(NewToneFrequency));
-
+                   // if (endHandShakeCounter >= 2) { // stop listening after 2 endHandShakeFrequency received
                         if (msgCount < 25) {
                             cFrequencyConverter.calculateBits(NewToneFrequency, false);
                             msgCount++;
-                        } else if (msgCount >= 27)
+                        } else if (msgCount >= 27) {
                             StopRecord();
+                            Log.d("Debug ", "listening End");
+                            Log.d("Debug ", String.valueOf(NewToneFrequency));
+
+                        }
                         else {
                             cFrequencyConverter.calculateBits(NewToneFrequency, true);
                             msgCount++;
                         }
-                    }
+                   // }
                 }
                 else
                     StopRecord();
             }
         }
         ArrayList<String> data = cFrequencyConverter.getMsgArrayNoChecksum();
-        data.remove(0);
-        data.remove(data.size() -1);
+      //  data.remove(0);
+       // data.remove(data.size() -1);
         String chksum = calcChecksum(data.toString());
         if (chksum.equals(cFrequencyConverter.getMsgArrayChecksum().toString()))
             ReceivedMsg = cFrequencyConverter.getMsgArray();

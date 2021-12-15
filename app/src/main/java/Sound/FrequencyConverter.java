@@ -41,6 +41,8 @@ public class FrequencyConverter {
         currByte=0x00;
         currShift=0;
         MsgArray = new ArrayList<String>();
+        MsgArrayChecksum = new ArrayList<String>();
+        MsgArrayNoChecksum = new ArrayList<String>();
         frequenciesToFourBit = new HashMap<Integer, String>();
         for(int i = 17600 ; i < 17700; i++)
         {
