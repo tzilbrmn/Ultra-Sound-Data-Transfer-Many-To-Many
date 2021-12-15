@@ -21,8 +21,8 @@ import Sound.FrequencyConverter;
  *      public void setMsg2Send(String sMsg2Send)
  **********************************************************************************************/
 public class Sender {
-
-    private String Msg2Send;
+    private String Msg2Send = "";
+    private String errMsg2Send = "FFF";
     private double durationTime = 0.27; // time to play tone -> play on 0.18, optimal on 0.20, best on 0.27
     private int sampleRate = 44100; // Number of samples in 1 second
     private AudioTrack MyAudioTrack = null;
@@ -68,7 +68,7 @@ public class Sender {
      * description: function to play a specific frequency for a specific duration
      * args: freqOfTone, duration
      * return: void
-    **********************************************************************************************/
+     **********************************************************************************************/
     private void PlayTone(double freqOfTone, double duration) {
         int NumOfSamplesPerDuration = (int) Math.ceil(duration * sampleRate);// number of samples in give duration
         double sample[] = new double[(int) NumOfSamplesPerDuration];
@@ -178,7 +178,9 @@ public class Sender {
         BitsPerTone = settingsArr[2];
 
         FrequencyConverter cFrequencyConverter = new FrequencyConverter( BitsPerTone);
-        ArrayList<Integer> MsgFrequencies = cFrequencyConverter.calculateMessageFrequencies(this.Msg2Send);
+        ArrayList<Integer> MsgFrequencies = cFrequencyConverter.calculateMessageFrequencies(errMsg2Send);
+
+        Log.d("Debug", "Sending error msg");
 
         int bufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
         MyAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize, AudioTrack.MODE_STREAM);

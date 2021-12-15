@@ -80,7 +80,7 @@ public class ViewVisitCard extends AppCompatActivity {
         Log.d("debug", "Send on ViewVisitCard");
         String binaryRep = Utils.utils.strToBinary(frame);
 
-        if (!binaryRep.isEmpty() && !binaryRep.equals(" ")) {
+        if (!binaryRep.isEmpty() && !binaryRep.equals("")) {
             Sender cSender = new Sender();
             cSender.setMsg2Send(binaryRep);
             Integer[] SettingsArr = Utils.SoundSettings.getSettings();
