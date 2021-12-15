@@ -22,7 +22,7 @@ import Sound.FrequencyConverter;
  **********************************************************************************************/
 public class Sender {
 
-    private String Msg2Send;
+    private String Msg2Send = "";
     private double durationTime = 0.27; // time to play tone -> play on 0.18, optimal on 0.20, best on 0.27
     private int sampleRate = 44100; // Number of samples in 1 second
     private AudioTrack MyAudioTrack = null;

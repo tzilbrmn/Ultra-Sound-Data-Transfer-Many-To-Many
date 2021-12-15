@@ -1,7 +1,6 @@
 package com.example.svc;
 
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -13,6 +12,10 @@ import ReceiverPackage.Recorder;
 import Utils.NumbersGenerator;
 
 public class CommunicationNetwork extends Thread {
+    public void setFrame(String frame) {
+        this.frame = frame;
+    }
+
     String frame;
     Recorder recorder;
     Receiver reciever;
@@ -23,6 +26,10 @@ public class CommunicationNetwork extends Thread {
 
     Semaphore sem;
     String threadName;
+
+    public boolean isCanListen() {
+        return canListen;
+    }
 
     boolean canListen = true;
     boolean errorTimeOut = false;
@@ -35,17 +42,23 @@ public class CommunicationNetwork extends Thread {
         this.ViewVisitCard = new ViewVisitCard();
         this.reciever = new Receiver();
         this.recorder = new Recorder();
+
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public CommunicationNetwork(String threadName) {
         super(threadName);
         this.threadName = threadName;
-        //this.sem = new Semaphore(1);
+        this.sem = new Semaphore(1);
         this.addEncounter = new AddVC(this);
         this.ViewVisitCard = new ViewVisitCard();
         this.reciever = new Receiver();
         this.recorder = new Recorder();
+
+        this.numGen = new NumbersGenerator();
+        MBWP = numGen.calculateMBWP();
+        RBWP = numGen.calculateRBWP();
     }
 
     final private String listeningSemaphore = "Semaphore";
@@ -66,11 +79,9 @@ public class CommunicationNetwork extends Thread {
 
         if (frame.length() == 27) {
             frame = Utils.utils.strToBinary(frame);
-            Log.d("Debug ", "composeFrame Succeeded");
             this.frame = frame;
             return true;
         }
-        Log.d("Debug ", "composeFrame failed");
         return false;
     }
 
@@ -93,31 +104,25 @@ public class CommunicationNetwork extends Thread {
             len = len - 1;
         }
         String checkSum = Integer.toHexString(num);
-        Log.d("Debug ", "calculate chackSumS");
+
         return checkSum;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void startProcess() throws InterruptedException {
-        this.numGen = new NumbersGenerator();
-        MBWP = numGen.calculateMBWP();
-        RBWP = numGen.calculateRBWP();
-        Log.d("Debug ", "startProcess");
-
         CommunicationNetwork listeningThread = new CommunicationNetwork("Listen");
         listeningThread.setFrame(this.frame);
-      //  CommunicationNetwork transmittingThread = new CommunicationNetwork("Transmit");
-      //  transmittingThread.setFrame(this.frame);
+//        CommunicationNetwork transmittingThread = new CommunicationNetwork("Transmit");
+//       transmittingThread.setFrame(this.frame);
 
         // stating threads A and B
-      //  transmittingThread.start();
         listeningThread.start();
+//        transmittingThread.start();
 
         // waiting for threads A and B
         listeningThread.join();
-       // transmittingThread.join();
+//        transmittingThread.join();
     }
-
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -125,42 +130,34 @@ public class CommunicationNetwork extends Thread {
     public void run() {
 
         // run by thread A
-        //if (this.getName().equals("Listen")) {
-        while(true){
+       while (true) {
             try {
-                boolean succedded = false;
-                //sem.acquire();
+                boolean succeded = false;
+//                sem.acquire();
                 if (!waitingThread(MBWP))
                     waitingThread(RBWP);
                 do {
-                    succedded = waitingThread(MBWP);
-                } while (!succedded);
+                    succeded = waitingThread(MBWP);  //Succeeded  == The frame was sent correctly
+                } while (!succeded);
             } catch (InterruptedException | UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }
-        // run by thread B
-        /*else {
+/*        // run by thread B
+        else {
             try {
                 // acquiring the lock
                 sem.acquire();
 
                 Integer[] SettingsArr = Utils.SoundSettings.getSettings();
-                if (frame == null) {
-                    sem.release();
-                    Log.d("Debug ", "Frame fail. Trying again");
-                } else {
+                ViewVisitCard.Send(frame);
 
-                    ViewVisitCard.Send(frame);
-                    waitingThread(RBWP);
-                }
-
-
-            } catch (InterruptedException | UnsupportedEncodingException exc) {
+            } catch (InterruptedException exc) {
                 System.out.println(exc);
             }
+        }
 
-        }*/
+ */
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -182,7 +179,6 @@ public class CommunicationNetwork extends Thread {
             timer.start();
 
             while (canListen) {
-                Log.d("Debug ", "Start listening");
                 addEncounter.Listen();
             }
             timer.join();
@@ -192,15 +188,13 @@ public class CommunicationNetwork extends Thread {
         {
             if (!canListen)
             {
-                //sem.release();
-                Log.d("Debug ", "Start transmitting");
+//                sem.release();
                 ViewVisitCard.Send(frame);
 
                 Thread errorTime = new Thread() {
                     @Override
                     public void run() {
                         try {
-                            Log.d("Debug ", "Listen for errors");
                             errorTimeOut = true;
                             Thread.sleep(2000);
                             errorTimeOut = false;
@@ -229,6 +223,6 @@ public class CommunicationNetwork extends Thread {
 
 
     public String getFrame() { return frame; }
-    public void setFrame(String newFrame) { this.frame = newFrame; }
+
 }
 
