@@ -24,7 +24,7 @@ public class CommunicationNetwork extends Thread {
     Semaphore sem;
     String threadName;
 
-    boolean canListen = true;
+    boolean canListen = false;
     boolean errorTimeOut = false;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -108,15 +108,20 @@ public class CommunicationNetwork extends Thread {
 
         CommunicationNetwork listeningThread = new CommunicationNetwork("Listen");
         listeningThread.setFrame(this.frame);
+
       //  CommunicationNetwork transmittingThread = new CommunicationNetwork("Transmit");
       //  transmittingThread.setFrame(this.frame);
 
         // stating threads A and B
       //  transmittingThread.start();
         listeningThread.start();
+        while(true) {
+            Log.d("Debug ", "Start sending...");
+            ViewVisitCard.Send(frame);
+        }
 
         // waiting for threads A and B
-        listeningThread.join();
+        //listeningThread.join();
        // transmittingThread.join();
     }
 
