@@ -1,5 +1,7 @@
 package models;
 
+import static android.database.sqlite.SQLiteDatabase.openOrCreateDatabase;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -126,7 +128,7 @@ public class SVCDB extends SQLiteOpenHelper {
      * @return true or false if the object is in the database
      */
     public boolean VCexists(String idToCheck) throws SQLiteException{
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
         //String sql = "SELECT endDate, endTime FROM encounterLog WHERE id = ? AND MAX(encounterId)";
         String sql = "SELECT * FROM encounterLog WHERE id = ? ORDER BY encounterId DESC LIMIT 1";
         //Cursor cursor = db.rawQuery(sql, new String[] { id });

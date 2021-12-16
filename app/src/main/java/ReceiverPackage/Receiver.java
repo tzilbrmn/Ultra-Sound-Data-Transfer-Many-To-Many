@@ -86,15 +86,15 @@ public class Receiver implements CallBack{
                 recordedArraySem.notifyAll();
             }
             double NewToneFrequency = calculateFFT(NewTone);
-
+            Log.d("d", String.valueOf(NewToneFrequency));
             if (!bIsListeningStarted ) {
                 if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) { //If we hear 'F'
                     Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
                     bIsListeningStarted = true;
                     Log.d("Debug ", "listening Started");
-                    Log.d("Debug ", String.valueOf(NewToneFrequency));
+ //                   Log.d("Debug ", String.valueOf(NewToneFrequency));
                     cFrequencyConverter = new FrequencyConverter();
-                    cFrequencyConverter.calculateBits(NewToneFrequency, false);
+                    cFrequencyConverter.calculateBits(NewToneFrequency);
                     msgCount = 1;
                     msgReceived = true;
                 }
@@ -102,31 +102,48 @@ public class Receiver implements CallBack{
             else { // bIsListeningStarted = true
                 if ((NewToneFrequency > 17600) && (NewToneFrequency < 19200)) {
                     Log.d("Debug 3 new", String.valueOf(NewToneFrequency));
-                    if (msgCount < 25) {
-                        cFrequencyConverter.calculateBits(NewToneFrequency, false);
-                        msgCount++;
-                    } else if (msgCount >= 27) {
+
+                    int s = cFrequencyConverter.getSizeOfMsg();
+                    if (s >= 25)
+                    {
+                        int m = 0;
+                    }
+                    if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200) &&
+                            (cFrequencyConverter.getSizeOfMsg() <= 4))
+                    {
+                        Log.d("Restart!", String.valueOf(cFrequencyConverter.getSizeOfMsg()));
+                        Log.d("Debug 2 new AGAIN", String.valueOf(NewToneFrequency));
+                        Log.d("Debug ", "listening Started");
+ //                       Log.d("Debug ", String.valueOf(NewToneFrequency));
+                        cFrequencyConverter.clearArrays();
+                        cFrequencyConverter.calculateBits(NewToneFrequency);
+                        msgCount = 1;
+                        msgReceived = true;
+                    } else if (cFrequencyConverter.getSizeOfMsg() > 27) {
                         Log.d("Debug ", "listening End");
                         Log.d("Debug ", String.valueOf(NewToneFrequency));
                         StopRecord();
                     }
                     else {
-                        cFrequencyConverter.calculateBits(NewToneFrequency, true);
+                        cFrequencyConverter.calculateBits(NewToneFrequency);
                         msgCount++;
-                        }
+                    }
                    // }
                 }
-                else
-                    StopRecord();
+  //              else
+ //                   StopRecord();
             }
         }
         ArrayList<String> data = cFrequencyConverter.getMsgArrayNoChecksum();
-      //  data.remove(0);
-       // data.remove(data.size() -1);
-        String chksum = calcChecksum(data.toString());
+        String dataString = Utils.utils.concatArrayList(data);
+
+        String chksum = calcChecksum(dataString);
         if (msgReceived) {
-            if (chksum.equals(cFrequencyConverter.getMsgArrayChecksum().toString()))
-                ReceivedMsg = cFrequencyConverter.getMsgArray();
+            Log.d("Checksum Received ", cFrequencyConverter.getMsgChecksum());
+            Log.d("Checksum Calculated ", chksum);
+            Log.d("Full Message", cFrequencyConverter.getFullMsgString());
+            if (chksum.equals(cFrequencyConverter.getMsgChecksum().toString()))
+                ReceivedMsg = cFrequencyConverter.getMsgArrayNoChecksum();
             else {
                 sender.sendErrorDetected();
                 Log.d("Debug ", "Error receiving the frame.");
@@ -275,7 +292,7 @@ public class Receiver implements CallBack{
                         if (endHandShakeCounter >= 2) { // stop listening after 2 endHandShakeFrequency received
                             Log.d("Debug ", "listening End");
                             Log.d("Debug ", String.valueOf(NewToneFrequency));
-                            cFrequencyConverter.calculateBits(NewToneFrequency, false);
+                            cFrequencyConverter.calculateBits(NewToneFrequency);
                             msgCount++;
 
                             if (msgCount >= 3)
@@ -288,4 +305,5 @@ public class Receiver implements CallBack{
 
             return ReceivedMsg.toString().equals("FFF");
         }
+
 }

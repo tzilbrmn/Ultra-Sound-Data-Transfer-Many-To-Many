@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**********************************************************************************************
@@ -200,17 +201,22 @@ public class FrequencyConverter {
      * args: frequency
      * return: void
      **********************************************************************************************/
-    public void calculateBits(double frequency, boolean isChecksum){
+    public void calculateBits(double frequency){
         int frequencyInt = (int) Math.round(frequency);
         Log.d("we got = ", String.valueOf(frequencyInt));
         if(frequencyInt > 17600 && frequencyInt < 19200)
         {
-            if (!isChecksum) {
-                MsgArrayNoChecksum.add(frequenciesToFourBit.get(new Integer(frequencyInt)));
+            String charReceived = Utils.utils.binaryToText(frequenciesToFourBit.get(new Integer(frequencyInt)));
+            charReceived = Integer.toHexString(Integer.valueOf(charReceived));
+            Log.d("The char:", charReceived);
+            MsgArray.add(charReceived);
+            if (MsgArray.size() <= 25 && !charReceived.equals("f")) {
+                MsgArrayNoChecksum.add(charReceived);
             }
-            else
-                MsgArrayChecksum.add(frequenciesToFourBit.get(new Integer(frequencyInt)));
-            MsgArray.add(frequenciesToFourBit.get(new Integer(frequencyInt)));
+            if (MsgArray.size() > 25 && MsgArray.size() < 28)
+            {
+                MsgArrayChecksum.add(charReceived);
+            }
         }
     }
 
@@ -240,11 +246,31 @@ public class FrequencyConverter {
         MsgArrayNoChecksum = msgArrayNoChecksum;
     }
 
-    public ArrayList<String> getMsgArrayChecksum() {
-        return MsgArrayChecksum;
+    public String getMsgChecksum() {
+ /*       ArrayList<String> tmp = new ArrayList<String>((List<String>) MsgArray.subList(MsgArray.size()-2, MsgArray.size()));
+        String dataString = Utils.utils.concatArrayList(tmp);
+
+  */
+        String dataString = Utils.utils.concatArrayList(MsgArrayChecksum);
+        return dataString;
     }
 
     public void setMsgArrayChecksum(ArrayList<String> msgArrayChecksum) {
         MsgArrayChecksum = msgArrayChecksum;
+    }
+
+    public String getFullMsgString() {
+        String dataString = Utils.utils.concatArrayList(MsgArray);
+        return dataString;
+    }
+
+    public int getSizeOfMsg() {
+        return MsgArray.size();
+    }
+
+    public void clearArrays() {
+        MsgArray.clear();
+        MsgArrayChecksum.clear();
+        MsgArrayNoChecksum.clear();
     }
 }

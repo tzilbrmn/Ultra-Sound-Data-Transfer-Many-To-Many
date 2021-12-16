@@ -74,11 +74,11 @@ public class ViewVisitCard extends AppCompatActivity {
     /**
      * the onClick of the <i>Send</i> button.
      * sends the visit card over sound. convert it to string, compress it and send it.
-     * @param frame Frame to send.
+     * @param binaryRep Frame to send.
      */
-    public void Send(String frame){
+    public void Send(String binaryRep){
         Log.d("debug", "Send on ViewVisitCard");
-        String binaryRep = Utils.utils.strToBinary(frame);
+        //String binaryRep = Utils.utils.strToBinary(frame);
 
         if (!binaryRep.isEmpty() && !binaryRep.equals("")) {
             Sender cSender = new Sender();

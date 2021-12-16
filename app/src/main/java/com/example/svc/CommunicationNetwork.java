@@ -38,14 +38,14 @@ public class CommunicationNetwork extends Thread {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public CommunicationNetwork(String threadName) {
+    public CommunicationNetwork(String threadName,ViewVisitCard vvc, Receiver receiver, Recorder rec) {
         super(threadName);
         this.threadName = threadName;
         //this.sem = new Semaphore(1);
         this.addEncounter = new AddVC(this);
-        this.ViewVisitCard = new ViewVisitCard();
-        this.reciever = new Receiver();
-        this.recorder = new Recorder();
+        this.ViewVisitCard = vvc;
+        this.reciever = receiver;
+        this.recorder = rec;
 
         this.numGen = new NumbersGenerator();
         MBWP = numGen.calculateMBWP();
@@ -63,15 +63,16 @@ public class CommunicationNetwork extends Thread {
      */
     public boolean composeFrame(String id) {
         String origBinaryRep = Utils.utils.convertStringToHex(id);
-        String frame = 'F' + origBinaryRep + 'F';
+        String frame = "f" + origBinaryRep + "f";
         String checksum = calcChecksum(id);
         if (checksum.length() < 2)
-            checksum = '0' + checksum;
+            checksum = "0" + checksum;
         frame += checksum;
 
         if (frame.length() == 27) {
             frame = Utils.utils.strToBinary(frame);
             Log.d("Debug ", "composeFrame Succeeded");
+            Log.d("Debug ", frame);
             this.frame = frame;
             return true;
         }
@@ -106,7 +107,7 @@ public class CommunicationNetwork extends Thread {
     public void startProcess() throws InterruptedException {
         Log.d("Debug ", "startProcess");
 
-        CommunicationNetwork listeningThread = new CommunicationNetwork("Listen");
+        CommunicationNetwork listeningThread = new CommunicationNetwork("Listen", this.ViewVisitCard, this.reciever, this.recorder);
         listeningThread.setFrame(this.frame);
       //  CommunicationNetwork transmittingThread = new CommunicationNetwork("Transmit");
       //  transmittingThread.setFrame(this.frame);

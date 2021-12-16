@@ -124,10 +124,8 @@ public class Encounter {
      * @return The Encounter object extracted from the received string.
      */
     public static Encounter receiveVisitCard(String enc) throws IndexOutOfBoundsException,IllegalArgumentException{
-        String[] info = enc.split(";");
         //fill empty fields in the end with empty strings
-        info = utils.fillArray(info,1);
-        return new Encounter(info[0], info[1], info[2]);
+        return new Encounter(enc);
     }
 
     /**
