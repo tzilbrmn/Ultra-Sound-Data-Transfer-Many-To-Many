@@ -69,6 +69,7 @@ public class Receiver implements CallBack{
 
         int msgLen = 27;
         int msgCount = 0;
+        boolean msgReceived = false;
 
         while (bIsRecording) {
             //Wait and get recorded data
@@ -86,7 +87,7 @@ public class Receiver implements CallBack{
             }
             double NewToneFrequency = calculateFFT(NewTone);
 
-            if (!bIsListeningStarted && cm.isCanListen()) {
+            if (!bIsListeningStarted ) {
                 if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) { //If we hear 'F'
                     Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
                     bIsListeningStarted = true;
@@ -95,6 +96,7 @@ public class Receiver implements CallBack{
                     cFrequencyConverter = new FrequencyConverter();
                     cFrequencyConverter.calculateBits(NewToneFrequency, false);
                     msgCount = 1;
+                    msgReceived = true;
                 }
             }
             else { // bIsListeningStarted = true
@@ -122,12 +124,14 @@ public class Receiver implements CallBack{
       //  data.remove(0);
        // data.remove(data.size() -1);
         String chksum = calcChecksum(data.toString());
-        if (chksum.equals(cFrequencyConverter.getMsgArrayChecksum().toString()))
-            ReceivedMsg = cFrequencyConverter.getMsgArray();
-        else
-        {
-            sender.sendErrorDetected();
-            Log.d("Debug ", "Error receiving the frame.");
+        if (msgReceived) {
+            if (chksum.equals(cFrequencyConverter.getMsgArrayChecksum().toString()))
+                ReceivedMsg = cFrequencyConverter.getMsgArray();
+            else {
+                sender.sendErrorDetected();
+                Log.d("Debug ", "Error receiving the frame.");
+
+            }
         }
         return ReceivedMsg;
     }

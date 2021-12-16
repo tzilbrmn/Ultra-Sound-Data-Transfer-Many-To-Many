@@ -98,7 +98,7 @@ public class CommunicationNetwork extends Thread {
             len = len - 1;
         }
         String checkSum = Integer.toHexString(num);
-        Log.d("Debug ", "calculate chackSumS");
+        Log.d("Debug ", "calculate checksums");
         return checkSum;
     }
 
