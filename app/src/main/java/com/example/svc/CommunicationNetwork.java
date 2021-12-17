@@ -111,16 +111,10 @@ public class CommunicationNetwork extends Thread {
 
         CommunicationNetwork listeningThread = new CommunicationNetwork("Listen", this.ViewVisitCard, this.reciever, this.recorder, this.addEncounter);
         listeningThread.setFrame(this.frame);
-      //  CommunicationNetwork transmittingThread = new CommunicationNetwork("Transmit");
-      //  transmittingThread.setFrame(this.frame);
 
-        // stating threads A and B
-      //  transmittingThread.start();
         listeningThread.start();
 
-        // waiting for threads A and B
         listeningThread.join();
-       // transmittingThread.join();
     }
 
 
@@ -144,28 +138,6 @@ public class CommunicationNetwork extends Thread {
                 e.printStackTrace();
             }
         }
-        // run by thread B
-        /*else {
-            try {
-                // acquiring the lock
-                sem.acquire();
-
-                Integer[] SettingsArr = Utils.SoundSettings.getSettings();
-                if (frame == null) {
-                    sem.release();
-                    Log.d("Debug ", "Frame fail. Trying again");
-                } else {
-
-                    ViewVisitCard.Send(frame);
-                    waitingThread(RBWP);
-                }
-
-
-            } catch (InterruptedException | UnsupportedEncodingException exc) {
-                System.out.println(exc);
-            }
-
-        }*/
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

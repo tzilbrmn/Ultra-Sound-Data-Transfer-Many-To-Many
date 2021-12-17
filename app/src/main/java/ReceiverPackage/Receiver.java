@@ -87,7 +87,6 @@ public class Receiver implements CallBack{
             double NewToneFrequency = calculateFFT(NewTone);
             Log.d("d", String.valueOf(NewToneFrequency));
 
-        if (!bIsListeningStarted) {
             if ((NewToneFrequency > 17600) && (NewToneFrequency < 19200)) {
                 Log.d("Debug ", "Note in our range");
                 Log.d("Debug ", String.valueOf(NewToneFrequency));
@@ -97,7 +96,6 @@ public class Receiver implements CallBack{
                 Log.d("Debug ", "Note out of our range");
                 Log.d("Debug ", String.valueOf(NewToneFrequency));
             }
-        }
             if (!bIsListeningStarted && !msgReceived) {
                 if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) { //If we hear 'F'
                     Log.d("Debug 2 new", String.valueOf(NewToneFrequency));

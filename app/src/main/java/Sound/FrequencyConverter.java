@@ -116,11 +116,10 @@ public class FrequencyConverter {
      * args: Msg2Send
      * return: ArrayList<Integer>
      **********************************************************************************************/
-    public ArrayList<Integer> calculateMessageFrequencies(String Msg2Send){
-        String msg2Send = utils.strToBinary(Msg2Send);
+    public ArrayList<Integer> calculateMessageFrequencies(String msg2Send){
         ArrayList<Integer> freqArr = new ArrayList<Integer>();
         ArrayList<Integer> testFreq = new ArrayList<Integer>();
-        Log.d("msg to send = ", Msg2Send);
+        Log.d("msg to send = ", msg2Send);
         //this should not happen because er convert our bit from byte and byte size is 8.
         while(msg2Send.length() % 4 != 0)
         {
@@ -203,7 +202,7 @@ public class FrequencyConverter {
      * args: frequency
      * return: void
      **********************************************************************************************/
-    public void calculateBits(double frequency, boolean isChecksum) {  /* compiled code */
+    public void calculateBits(double frequency) {  /* compiled code */
     int frequencyInt = (int) Math.round(frequency);
         Log.d("we got = ", String.valueOf(frequencyInt));
         if(frequencyInt > 17600 && frequencyInt < 19200)
