@@ -11,6 +11,7 @@ import java.util.concurrent.Semaphore;
 import ReceiverPackage.Receiver;
 import ReceiverPackage.Recorder;
 import Utils.NumbersGenerator;
+import models.SVCDB;
 
 public class CommunicationNetwork extends Thread {
     String frame;
@@ -27,22 +28,23 @@ public class CommunicationNetwork extends Thread {
     boolean canListen = true;
     boolean errorTimeOut = false;
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public CommunicationNetwork() {
+/*    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public CommunicationNetwork(AddVC addVc) {
         super("Main");
         this.sem = new Semaphore(1);
-        this.addEncounter = new AddVC(this);
+        this.addEncounter = addVc;
         this.ViewVisitCard = new ViewVisitCard();
         this.reciever = new Receiver();
         this.recorder = new Recorder();
     }
 
+ */
+
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public CommunicationNetwork(String threadName,ViewVisitCard vvc, Receiver receiver, Recorder rec) {
+    public CommunicationNetwork(String threadName,ViewVisitCard vvc, Receiver receiver, Recorder rec, AddVC addVc) {
         super(threadName);
         this.threadName = threadName;
-        //this.sem = new Semaphore(1);
-        this.addEncounter = new AddVC(this);
+        this.addEncounter = addVc;
         this.ViewVisitCard = vvc;
         this.reciever = receiver;
         this.recorder = rec;
@@ -107,7 +109,7 @@ public class CommunicationNetwork extends Thread {
     public void startProcess() throws InterruptedException {
         Log.d("Debug ", "startProcess");
 
-        CommunicationNetwork listeningThread = new CommunicationNetwork("Listen", this.ViewVisitCard, this.reciever, this.recorder);
+        CommunicationNetwork listeningThread = new CommunicationNetwork("Listen", this.ViewVisitCard, this.reciever, this.recorder, this.addEncounter);
         listeningThread.setFrame(this.frame);
       //  CommunicationNetwork transmittingThread = new CommunicationNetwork("Transmit");
       //  transmittingThread.setFrame(this.frame);

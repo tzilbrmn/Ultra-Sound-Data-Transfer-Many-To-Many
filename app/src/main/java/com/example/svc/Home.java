@@ -56,6 +56,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
      * gets the visit cards owned by the currently logged in user and populates the table.
      * @param savedInstanceState {@inheritDoc}
      */
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,16 +69,16 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 0);
         }
+        db = new SVCDB(this);
 
-        addVC = new AddVC(new CommunicationNetwork());
+        addVC = new AddVC(db);
         txtShowInfo = (TextView)findViewById(R.id.txtMyInfo);
         txtShowInfo.setText("in onCreate");
 
-        db = new SVCDB(this);
 
         //DO THIS ONLY ON DEBUG!!!
-//        db.onUpgrade(db.getReadableDatabase(), 1, 1);
-//        db.dropTable();
+        //db.onUpgrade(db.getReadableDatabase(), 1, 1);
+        //db.dropTable();
 
         Button btn = (Button)findViewById(R.id.signUpBtn);
         btn.setOnClickListener(this);
@@ -177,25 +178,13 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void signUp(View v) throws InterruptedException {
         String id = ((EditText)findViewById(R.id.TxtUserId)).getText().toString();  // TAL - need to get from phone
-        cSender = new Sender();
-        cSender.setUserId(id);
+//        cSender = new Sender();
+//        cSender.setUserId(id);
         //Sign up to the cloud???
         txtShowInfo.setText("in signUp");
 
-/*
-        //Try to use the DB
-        Encounter enc = new Encounter(id);
-
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
-        LocalDateTime ldt = LocalDateTime.now();
-        enc.setEncounterTime(timeFormat.format(ldt));
-        enc.setEncounterDate(dateFormat.format(ldt));
-
-        enc.addVC(enc, db);
-*/
         userVisitCards = Encounter.getUserVisitCards(db);
-        addVC.ReceiveVC(); //The call to start the process of transmitting and receiving the frames.
+        addVC.ReceiveVC(id); //The call to start the process of transmitting and receiving the frames.
         try {
             int lastIndex = userVisitCards.size() - 1;
 

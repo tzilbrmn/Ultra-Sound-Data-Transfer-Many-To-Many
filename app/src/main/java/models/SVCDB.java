@@ -12,6 +12,8 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -54,7 +56,7 @@ public class SVCDB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         // TODO Auto-generated method stub
-        //SQLiteDatabase db = new SQLiteDatabase("\db");
+        //SQLiteDatabase db = new SQLiteDatabase("db");
 
         db.execSQL(
                 "CREATE TABLE IF NOT EXISTS `encounterLog` (" +
@@ -129,8 +131,12 @@ public class SVCDB extends SQLiteOpenHelper {
      */
     public boolean VCexists(String idToCheck) throws SQLiteException{
         SQLiteDatabase db = this.getWritableDatabase();
+        this.onCreate(db);
+        //SQLiteDatabase db = myGetWritableDatabase();
+        //SQLiteDatabase db =  SQLiteDatabase.openDatabase("SVC", null, SQLiteDatabase.OPEN_READWRITE);
+        //.getDatabasePath("SVC");
         //String sql = "SELECT endDate, endTime FROM encounterLog WHERE id = ? AND MAX(encounterId)";
-        String sql = "SELECT * FROM encounterLog WHERE id = ? ORDER BY encounterId DESC LIMIT 1";
+        String sql = "SELECT * FROM 'encounterLog' WHERE id = ? ORDER BY encounterId DESC LIMIT 1";
         //Cursor cursor = db.rawQuery(sql, new String[] { id });
         Cursor cursor = db.rawQuery(sql, new String[] { idToCheck });
         if(cursor.getCount()<=0){
@@ -139,6 +145,15 @@ public class SVCDB extends SQLiteOpenHelper {
         }
         cursor.close();
         return true;
+    }
+
+    public synchronized SQLiteDatabase myGetWritableDatabase() {
+ //       File dbFile = context.getDatabasePath("SVCDB.db");
+ //       if (dbFile != null && !dbFile.exists()) {
+  //          int m = 0;
+  //      }
+
+        return SQLiteDatabase.openDatabase("SVCDB.db", null, SQLiteDatabase.OPEN_READWRITE);
     }
 
     /**

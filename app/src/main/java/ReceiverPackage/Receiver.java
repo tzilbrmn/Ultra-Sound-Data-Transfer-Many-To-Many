@@ -87,7 +87,7 @@ public class Receiver implements CallBack{
             }
             double NewToneFrequency = calculateFFT(NewTone);
             Log.d("d", String.valueOf(NewToneFrequency));
-            if (!bIsListeningStarted ) {
+            if (!bIsListeningStarted && !msgReceived) {
                 if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) { //If we hear 'F'
                     Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
                     bIsListeningStarted = true;
@@ -104,7 +104,7 @@ public class Receiver implements CallBack{
                     Log.d("Debug 3 new", String.valueOf(NewToneFrequency));
 
                     int s = cFrequencyConverter.getSizeOfMsg();
-                    if (s >= 25)
+                    if (s >= 29)
                     {
                         int m = 0;
                     }
@@ -119,7 +119,7 @@ public class Receiver implements CallBack{
                         cFrequencyConverter.calculateBits(NewToneFrequency);
                         msgCount = 1;
                         msgReceived = true;
-                    } else if (cFrequencyConverter.getSizeOfMsg() > 27) {
+                    } else if (cFrequencyConverter.getSizeOfMsg() >= 27) {
                         Log.d("Debug ", "listening End");
                         Log.d("Debug ", String.valueOf(NewToneFrequency));
                         StopRecord();

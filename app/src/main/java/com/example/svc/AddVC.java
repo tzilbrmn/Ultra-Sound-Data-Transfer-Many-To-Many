@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import ReceiverPackage.Receiver;
+import ReceiverPackage.Recorder;
 import Utils.Constants;
 import Utils.Smaz;
 import models.Encounter;
@@ -34,6 +35,7 @@ import java.util.Locale;
 
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)/*change to oreo version of OS*/
 public class AddVC extends AppCompatActivity {
+
     /**
      * Instance variables:
      * db - an instance of the SQLite Helper class.
@@ -46,15 +48,11 @@ public class AddVC extends AppCompatActivity {
      * {@inheritDoc}
      * Initializes the db instance, gets the currently logged in user from the intent <i>Extra</i> dictionary.
      */
-    protected AddVC(CommunicationNetwork cm) {
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    protected AddVC(SVCDB db) {
 
-        db = new SVCDB(this);
-        communicationNetwork = cm;
-    }
-
-    public AddVC() {
-        db = new SVCDB(this);
-        communicationNetwork = new CommunicationNetwork();
+        this.db = db;
+        communicationNetwork = new CommunicationNetwork("", new ViewVisitCard(), new Receiver(), new Recorder(), this);
     }
 
     /**
@@ -85,10 +83,10 @@ public class AddVC extends AppCompatActivity {
      * After it receives the data, it saves the received VC to the DB and to the phone book
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void ReceiveVC() throws InterruptedException {
+    public void ReceiveVC(String id) throws InterruptedException {
         System.out.println("Receiving...");
         //get recording permission
-            communicationNetwork.composeFrame("99999999999999999999999");
+            communicationNetwork.composeFrame(id);
             communicationNetwork.startProcess();//listen for ultrasound
     }
 
