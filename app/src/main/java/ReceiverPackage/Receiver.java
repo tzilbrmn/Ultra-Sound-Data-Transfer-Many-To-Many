@@ -86,44 +86,42 @@ public class Receiver implements CallBack{
             }
             double NewToneFrequency = calculateFFT(NewTone);
             Log.d("d", String.valueOf(NewToneFrequency));
-            if (!bIsListeningStarted && !msgReceived) {
-            if((NewToneFrequency > 17600) && (NewToneFrequency < 19200)){
+
+        if (!bIsListeningStarted) {
+            if ((NewToneFrequency > 17600) && (NewToneFrequency < 19200)) {
                 Log.d("Debug ", "Note in our range");
                 Log.d("Debug ", String.valueOf(NewToneFrequency));
                 this.isIdle = false;
-            }
-            else {
+            } else {
                 this.isIdle = true;
                 Log.d("Debug ", "Note out of our range");
                 Log.d("Debug ", String.valueOf(NewToneFrequency));
             }
-            if (!bIsListeningStarted ) {
+        }
+            if (!bIsListeningStarted && !msgReceived) {
                 if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) { //If we hear 'F'
                     Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
                     bIsListeningStarted = true;
                     Log.d("Debug ", "listening Started");
- //                   Log.d("Debug ", String.valueOf(NewToneFrequency));
+                    //                   Log.d("Debug ", String.valueOf(NewToneFrequency));
                     cFrequencyConverter = new FrequencyConverter();
                     cFrequencyConverter.calculateBits(NewToneFrequency);
                     msgReceived = true;
                 }
-            }
-            else { // bIsListeningStarted = true
+            } else { // bIsListeningStarted = true
                 if ((NewToneFrequency > 17600) && (NewToneFrequency < 19200)) {
                     Log.d("Debug 3 new", String.valueOf(NewToneFrequency));
 
                     int s = cFrequencyConverter.getSizeOfMsg();
-                    if (s >= 29)
-                    {
+                    if (s >= 29) {
                         int m = 0;
                     }
                     if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200) &&
-                            (cFrequencyConverter.getSizeOfMsg() <= 4))
-                    {
+                            (cFrequencyConverter.getSizeOfMsg() <= 4)) {
                         Log.d("Restart!", String.valueOf(cFrequencyConverter.getSizeOfMsg()));
                         Log.d("Debug 2 new AGAIN", String.valueOf(NewToneFrequency));
                         Log.d("Debug ", "listening Started");
- //                       Log.d("Debug ", String.valueOf(NewToneFrequency));
+                        //                       Log.d("Debug ", String.valueOf(NewToneFrequency));
                         cFrequencyConverter.clearArrays();
                         cFrequencyConverter.calculateBits(NewToneFrequency);
                         msgReceived = true;
@@ -131,14 +129,13 @@ public class Receiver implements CallBack{
                         Log.d("Debug ", "listening End");
                         Log.d("Debug ", String.valueOf(NewToneFrequency));
                         StopRecord();
-                    }
-                    else {
+                    } else {
                         cFrequencyConverter.calculateBits(NewToneFrequency);
                     }
-                   // }
+                    // }
                 }
-  //              else
- //                   StopRecord();
+                //              else
+                //                   StopRecord();
             }
         }
         ArrayList<String> data = cFrequencyConverter.getMsgArrayNoChecksum();
@@ -158,7 +155,7 @@ public class Receiver implements CallBack{
             }
         }
         return ReceivedMsg;
-    }
+        }
 
     /**********************************************************************************************
      * function: calculateFFT
