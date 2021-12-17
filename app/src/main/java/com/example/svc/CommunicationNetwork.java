@@ -171,7 +171,10 @@ public class CommunicationNetwork extends Thread {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     protected boolean waitingThread(long timeToWait) throws UnsupportedEncodingException, InterruptedException {
 
-        if (!recorder.getIsIdle() || canListen) {
+        if (!reciever.getIsIdle() || canListen) {
+            if(!reciever.getIsIdle())
+                Log.d("Debug ", "is idle = false");
+            else Log.d("Debug ", "is idle = true");
 
             Thread timer = new Thread() {
                 @Override
@@ -195,6 +198,8 @@ public class CommunicationNetwork extends Thread {
         }
         else
         {
+
+            Log.d("Debug ", "IsIdle = true");
             if (!canListen)
             {
                 //sem.release();

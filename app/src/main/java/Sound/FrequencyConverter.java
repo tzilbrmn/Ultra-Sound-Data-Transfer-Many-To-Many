@@ -2,6 +2,7 @@ package Sound;
 
 import android.util.Log;
 
+import Utils.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -116,16 +117,17 @@ public class FrequencyConverter {
      * return: ArrayList<Integer>
      **********************************************************************************************/
     public ArrayList<Integer> calculateMessageFrequencies(String Msg2Send){
+        String msg2Send = utils.strToBinary(Msg2Send);
         ArrayList<Integer> freqArr = new ArrayList<Integer>();
         ArrayList<Integer> testFreq = new ArrayList<Integer>();
         Log.d("msg to send = ", Msg2Send);
         //this should not happen because er convert our bit from byte and byte size is 8.
-        while(Msg2Send.length() % 4 != 0)
+        while(msg2Send.length() % 4 != 0)
         {
-            Msg2Send += '0';
+            msg2Send += '0';
         }
-        for(int i=0; i<Msg2Send.length(); i+=4){
-            String valueStr = Msg2Send.substring(i,i+4);
+        for(int i=0; i<msg2Send.length(); i+=4){
+            String valueStr = msg2Send.substring(i,i+4);
             if(valueStr.compareTo("0000") == 0)
             {
                 freqArr.add(new Integer(17650));
@@ -201,8 +203,8 @@ public class FrequencyConverter {
      * args: frequency
      * return: void
      **********************************************************************************************/
-    public void calculateBits(double frequency){
-        int frequencyInt = (int) Math.round(frequency);
+    public void calculateBits(double frequency, boolean isChecksum) {  /* compiled code */
+    int frequencyInt = (int) Math.round(frequency);
         Log.d("we got = ", String.valueOf(frequencyInt));
         if(frequencyInt > 17600 && frequencyInt < 19200)
         {

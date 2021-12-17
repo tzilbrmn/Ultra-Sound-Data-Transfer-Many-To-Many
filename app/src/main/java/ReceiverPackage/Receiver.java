@@ -43,6 +43,9 @@ public class Receiver implements CallBack{
     private Sender sender;
     private CommunicationNetwork communicationNet;
 
+    private boolean isIdle = false;
+
+
     public Receiver() {
         this.sender = new Sender();
     }
@@ -84,6 +87,17 @@ public class Receiver implements CallBack{
             double NewToneFrequency = calculateFFT(NewTone);
             Log.d("d", String.valueOf(NewToneFrequency));
             if (!bIsListeningStarted && !msgReceived) {
+            if((NewToneFrequency > 17600) && (NewToneFrequency < 19200)){
+                Log.d("Debug ", "Note in our range");
+                Log.d("Debug ", String.valueOf(NewToneFrequency));
+                this.isIdle = false;
+            }
+            else {
+                this.isIdle = true;
+                Log.d("Debug ", "Note out of our range");
+                Log.d("Debug ", String.valueOf(NewToneFrequency));
+            }
+            if (!bIsListeningStarted ) {
                 if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) { //If we hear 'F'
                     Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
                     bIsListeningStarted = true;
@@ -299,4 +313,35 @@ public class Receiver implements CallBack{
             return ReceivedMsg.toString().equals("FFF");
         }
 
+  /*  public boolean checkIsIdle() throws UnsupportedEncodingException {
+        Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND + THREAD_PRIORITY_MORE_FAVORABLE);
+
+        byte[] NewTone;
+        recordedArray = new ArrayList<byte[]>();
+        synchronized (recordedArraySem) {
+            while (recordedArray.isEmpty()) {
+                try {
+                    recordedArraySem.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            NewTone = recordedArray.remove(0);
+            recordedArraySem.notifyAll();
+        }
+        double NewToneFrequency = calculateFFT(NewTone);
+
+        Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
+        if ((NewToneFrequency > 17600) && (NewToneFrequency < 19200)) {
+                Log.d("Debug ", "Note in our range");
+                Log.d("Debug ", String.valueOf(NewToneFrequency));
+                this.isIdle = false;
+            }
+        else this.isIdle = true;
+        return this.isIdle;
+    }
+*/
+        public boolean getIsIdle(){ return this.isIdle; }
+
+        public void setIsIdle(boolean val){this.isIdle = val;}
 }
