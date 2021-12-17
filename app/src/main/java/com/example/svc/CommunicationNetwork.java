@@ -25,7 +25,7 @@ public class CommunicationNetwork extends Thread {
     Semaphore sem;
     String threadName;
 
-    boolean canListen = true;
+    boolean canListen = false;
     boolean errorTimeOut = false;
 
 /*    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -127,6 +127,8 @@ public class CommunicationNetwork extends Thread {
         //if (this.getName().equals("Listen")) {
         while(true){
             try {
+
+                reciever.setIsIdle(true);
                 boolean succedded = false;
                 //sem.acquire();
                 if (!waitingThread(MBWP))
