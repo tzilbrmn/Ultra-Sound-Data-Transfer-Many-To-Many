@@ -64,11 +64,7 @@ public class Receiver implements CallBack{
         cRecorder.setCallback(this);
         cRecorder.start();
         boolean bIsListeningStarted = false;
-        int startHandShakeCounter = 0;
-        int endHandShakeCounter = 0;
 
-        int msgLen = 27;
-        int msgCount = 0;
         boolean msgReceived = false;
 
         while (bIsRecording) {
@@ -95,7 +91,6 @@ public class Receiver implements CallBack{
  //                   Log.d("Debug ", String.valueOf(NewToneFrequency));
                     cFrequencyConverter = new FrequencyConverter();
                     cFrequencyConverter.calculateBits(NewToneFrequency);
-                    msgCount = 1;
                     msgReceived = true;
                 }
             }
@@ -117,7 +112,6 @@ public class Receiver implements CallBack{
  //                       Log.d("Debug ", String.valueOf(NewToneFrequency));
                         cFrequencyConverter.clearArrays();
                         cFrequencyConverter.calculateBits(NewToneFrequency);
-                        msgCount = 1;
                         msgReceived = true;
                     } else if (cFrequencyConverter.getSizeOfMsg() >= 27) {
                         Log.d("Debug ", "listening End");
@@ -126,7 +120,6 @@ public class Receiver implements CallBack{
                     }
                     else {
                         cFrequencyConverter.calculateBits(NewToneFrequency);
-                        msgCount++;
                     }
                    // }
                 }
