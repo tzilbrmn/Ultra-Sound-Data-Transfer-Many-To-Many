@@ -26,7 +26,8 @@ public class CommunicationNetwork extends Thread {
     String threadName;
 
     boolean canListen = false;
-    boolean errorTimeOut = false;
+    private boolean errorTimeOut = false;
+    private boolean receivedError = false;
 
 /*    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public CommunicationNetwork(AddVC addVc) {
@@ -146,7 +147,7 @@ public class CommunicationNetwork extends Thread {
     protected boolean waitingThread(long timeToWait) throws UnsupportedEncodingException, InterruptedException {
 
         if (!reciever.getIsIdle() || canListen) {
-            if(!reciever.getIsIdle())
+            if (!reciever.getIsIdle())
                 Log.d("Debug ", "is idle = false");
             else Log.d("Debug ", "is idle = true");
 
@@ -169,48 +170,70 @@ public class CommunicationNetwork extends Thread {
             }
             timer.join();
             return false;
-        }
-        else
-        {
+        } else {
 
             Log.d("Debug ", "IsIdle = true");
-            if (!canListen)
-            {
-                //sem.release();
-                Log.d("Debug ", "Start transmitting");
-                ViewVisitCard.Send(frame);
+            if (!canListen) {
+                receivedError = true;
+                while (receivedError) {
+                    //sem.release();
+                    Log.d("Debug ", "Start transmitting");
+                    ViewVisitCard.Send(frame);
 
-                Thread errorTime = new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            Log.d("Debug ", "Listen for errors");
-                            errorTimeOut = true;
-                            Thread.sleep(2000);
-                            errorTimeOut = false;
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+            /*        Thread errorTime = new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                Log.d("Debug ", "Listen for errors");
+                                //errorTimeOut = true;
+                                Thread.sleep(2000);
+                                errorTimeOut = false;
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
-                };
+                    };
 
-                errorTime.start();
-                while (errorTimeOut)
-                {
-                    if (reciever.receiveError())
-                    {
-                        ViewVisitCard.Send(frame);
+             */
+
+                    Thread getErrorMsg = new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                receivedError = false;
+                                if (reciever.receiveError()) {
+                                    Log.d("Debug ", "receive error msg");
+                                    Log.d("Debug ", "send again");
+                                    receivedError = true;
+                                    //errorTimeOut = false;
+                                }
+                            } catch (UnsupportedEncodingException | InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+                   // errorTimeOut = true;
+                    getErrorMsg.start();
+
+                    getErrorMsg.join();
+
+                    /*
+                    if(!reciever.getErrorMsg()) {
+                        receivedError = false;
+                        Log.d("Debug ", "receive msg correctly");
+                        errorTimeOut = false;
                     }
+                     */
+
                 }
-                errorTime.join();
                 canListen = true;
+                Log.d("Debug ", "end transmit");
                 return true;
             }
             return false;
         }
+
     }
-
-
     public String getFrame() { return frame; }
     public void setFrame(String newFrame) { this.frame = newFrame; }
 
