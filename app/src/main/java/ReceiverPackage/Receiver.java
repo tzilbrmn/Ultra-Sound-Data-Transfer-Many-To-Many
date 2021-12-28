@@ -297,23 +297,24 @@ public class Receiver implements CallBack{
                 NewTone = recordedArray.remove(0);
                 recordedArraySem.notifyAll();
             }
-            errorTime.start();
-            errorTimeOut = true;
-            while(errorTimeOut){
-                double NewToneFrequency = calculateFFT(NewTone);
-                Log.d("d error", String.valueOf(NewToneFrequency));
+            try{
+                errorTime.start();
+                errorTimeOut = true;
+                while(errorTimeOut){
+                    double NewToneFrequency = calculateFFT(NewTone);
+                    Log.d("d error", String.valueOf(NewToneFrequency));
 
-                if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) {
-                    Log.d("Debug error", String.valueOf(NewToneFrequency));
-                    cFrequencyConverter.calculateBits(NewToneFrequency);
+                    if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) {
+                        Log.d("Debug error", String.valueOf(NewToneFrequency));
+                        cFrequencyConverter.calculateBits(NewToneFrequency);
 
-                    if(cFrequencyConverter.getSizeOfMsg()>=3){
-                        Log.d("Debug ", "Error listening End");
-                        errorTimeOut = false;
-                        errorTime.interrupt();
-                        StopRecord();
+                        if(cFrequencyConverter.getSizeOfMsg()>=3){
+                            Log.d("Debug ", "Error listening End");
+                            errorTimeOut = false;
+                            errorTime.stop();
+                            StopRecord();
+                        }
                     }
-                }
               /*  else{
                     Log.d("Debug ", "Not Error Tone");
                     countOutOfRangeTone++;
@@ -326,8 +327,12 @@ public class Receiver implements CallBack{
                 }
 
                */
+                }
+                errorTime.join();
+            }catch (InterruptedException | IllegalThreadStateException e) {
+                e.printStackTrace();
+                break;
             }
-            errorTime.join();
             }
 
             ReceivedMsg = cFrequencyConverter.getMsgArray();
