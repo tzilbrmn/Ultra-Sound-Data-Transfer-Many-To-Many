@@ -23,6 +23,9 @@ public class Encounter {
     private String encounterEndDate;
     private String encounterEndTime;
 
+    public Encounter() {
+
+    }
 
     public Encounter(String id){
         this.id = id;
@@ -115,6 +118,10 @@ public class Encounter {
     @Override
     public String toString() {
         return String.format("%s;%s;%s",this.id,this.encounterStartDate, this.encounterStartTime);
+    }
+
+    public String toStringFull() {
+        return String.format("%s;%s;%s;%s%s",this.id,this.encounterStartDate, this.encounterStartTime, this.encounterEndDate, this.encounterEndTime);
     }
 
 

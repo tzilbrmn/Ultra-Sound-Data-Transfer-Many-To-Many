@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "881844459206",
+    "project_id": "big-brother-ultra-sound",
+    "storage_bucket": "big-brother-ultra-sound.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:881844459206:android:88b5566cbb668ce8d869c7",
+        "android_client_info": {
+          "package_name": "com.example.svc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "881844459206-mr4ope1h8dg7n40sn7kjnc9iv7gjf69u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUSAJcwdR_7DO_rLblpopc1rU2ij_0uNw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "881844459206-mr4ope1h8dg7n40sn7kjnc9iv7gjf69u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

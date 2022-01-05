@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -49,6 +50,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
     Sender cSender;
     TextView txtShowInfo;
     AddVC addVC;
+    String id = "";
 
     /**
      * {@inheritDoc}
@@ -177,7 +179,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void signUp(View v) throws InterruptedException {
-        String id = ((EditText)findViewById(R.id.TxtUserId)).getText().toString();  // TAL - need to get from phone
+        this.id = ((EditText)findViewById(R.id.TxtUserId)).getText().toString();  // TAL - need to get from phone
 //        cSender = new Sender();
 //        cSender.setUserId(id);
         //Sign up to the cloud???
@@ -214,8 +216,11 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
             j = 8;
         txtShowInfo.setText("in onClick");
         try {
+            this.id = ((EditText)findViewById(R.id.TxtUserId)).getText().toString();
+            Cloud cloud = new Cloud(db, this, id);
+            cloud.upload();
             this.signUp(v);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ParseException e) {
             e.printStackTrace();
         }
     }
