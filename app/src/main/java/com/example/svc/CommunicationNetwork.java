@@ -28,18 +28,7 @@ public class CommunicationNetwork extends Thread {
     boolean canListen = false;
     private boolean errorTimeOut = false;
     private boolean receivedError = false;
-
-/*    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public CommunicationNetwork(AddVC addVc) {
-        super("Main");
-        this.sem = new Semaphore(1);
-        this.addEncounter = addVc;
-        this.ViewVisitCard = new ViewVisitCard();
-        this.reciever = new Receiver();
-        this.recorder = new Recorder();
-    }
-
- */
+    boolean succedded = false;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public CommunicationNetwork(String threadName,ViewVisitCard vvc, Receiver receiver, Recorder rec, AddVC addVc) {
@@ -130,13 +119,13 @@ public class CommunicationNetwork extends Thread {
             try {
 
                 reciever.setIsIdle(true);
-                boolean succedded = false;
+                this.succedded = false;
                 //sem.acquire();
                 if (!waitingThread(MBWP))
                     waitingThread(RBWP);
                 do {
-                    succedded = waitingThread(MBWP);
-                } while (!succedded);
+                    this.succedded = waitingThread(MBWP);
+                } while (!this.succedded);
             } catch (InterruptedException | UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -151,7 +140,7 @@ public class CommunicationNetwork extends Thread {
                 Log.d("Debug ", "is idle = false");
             else Log.d("Debug ", "is idle = true");
 
-            Thread timer = new Thread() {
+           /* Thread timer = new Thread() {
                 @Override
                 public void run() {
                     try {
@@ -163,12 +152,13 @@ public class CommunicationNetwork extends Thread {
                 }
             };
             timer.start();
-
-            while (canListen) {
+*/
+           // while (canListen) {
                 Log.d("Debug ", "Start listening");
-                addEncounter.Listen();
-            }
-            timer.join();
+                addEncounter.Listen(timeToWait);
+          //  }
+            canListen = false;
+          //  timer.join();
             return false;
         } else {
 
@@ -176,25 +166,8 @@ public class CommunicationNetwork extends Thread {
             if (!canListen) {
                 receivedError = true;
                 while (receivedError) {
-                    //sem.release();
                     Log.d("Debug ", "Start transmitting");
                     ViewVisitCard.Send(frame);
-
-            /*        Thread errorTime = new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                Log.d("Debug ", "Listen for errors");
-                                //errorTimeOut = true;
-                                Thread.sleep(2000);
-                                errorTimeOut = false;
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    };
-
-             */
 
                     Thread getErrorMsg = new Thread() {
                         @Override
@@ -205,25 +178,15 @@ public class CommunicationNetwork extends Thread {
                                     Log.d("Debug ", "receive error msg");
                                     Log.d("Debug ", "send again");
                                     receivedError = true;
-                                    //errorTimeOut = false;
                                 }
                             } catch (UnsupportedEncodingException | InterruptedException e) {
                                 e.printStackTrace();
                             }
                         }
                     };
-                   // errorTimeOut = true;
                     getErrorMsg.start();
 
                     getErrorMsg.join();
-
-                    /*
-                    if(!reciever.getErrorMsg()) {
-                        receivedError = false;
-                        Log.d("Debug ", "receive msg correctly");
-                        errorTimeOut = false;
-                    }
-                     */
 
                 }
                 canListen = true;

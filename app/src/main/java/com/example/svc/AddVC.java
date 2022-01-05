@@ -98,17 +98,17 @@ public class AddVC extends AppCompatActivity {
      * @param
      * @return void
      */
-    public void Listen() {
+    public void Listen(long timeToWait) {
         Receiver cReceiver = new Receiver();
         try {
-            ArrayList<String> ReceivedMsg = cReceiver.receiveMsg(communicationNetwork);
+            ArrayList<String> ReceivedMsg = cReceiver.receiveMsg(communicationNetwork, timeToWait);
             if (ReceivedMsg != null) {
                 String binaryRep = Utils.utils.concatArrayList(ReceivedMsg);
                 Encounter receivedVC = Encounter.receiveVisitCard(binaryRep);
                 Encounter.addVC(receivedVC, db);
             }
 
-        } catch (UnsupportedEncodingException | IllegalArgumentException | IndexOutOfBoundsException e) {
+        } catch (UnsupportedEncodingException | IllegalArgumentException | IndexOutOfBoundsException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -128,12 +128,13 @@ public class AddVC extends AppCompatActivity {
             case 0: {
                 //continue listening when user granted permission on mic
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Listen();
+                    Listen(0);
                 }
                 break;
             }
         }
     }
+
 
     /**
      * saves the received visit card to the phone book.

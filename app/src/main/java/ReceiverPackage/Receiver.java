@@ -44,6 +44,7 @@ public class Receiver implements CallBack{
     private CommunicationNetwork communicationNet;
     private boolean errorMsgAccured = false;
     private boolean errorTimeOut = false;
+    private boolean timeOut = false;
     private boolean isIdle = false;
 
 
@@ -55,8 +56,9 @@ public class Receiver implements CallBack{
      * description: function to receive msg via sound
      * args: settingsArr
      * return: ArrayList<String>
-     **********************************************************************************************/
-    public ArrayList<String> receiveMsg(CommunicationNetwork cm) throws UnsupportedEncodingException {
+     *********************************************************************************************
+     * @return*/
+    public ArrayList<String> receiveMsg(CommunicationNetwork cm, long timeToWait) throws UnsupportedEncodingException, InterruptedException {
         Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND + THREAD_PRIORITY_MORE_FAVORABLE);
 
         FrequencyConverter cFrequencyConverter = new FrequencyConverter();
@@ -70,6 +72,18 @@ public class Receiver implements CallBack{
         boolean bIsListeningStarted = false;
 
         boolean msgReceived = false;
+
+        Thread timer = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(timeToWait);
+                    timeOut = false;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
 
         while (bIsRecording) {
             //Wait and get recorded data
@@ -85,56 +99,66 @@ public class Receiver implements CallBack{
                 NewTone = recordedArray.remove(0);
                 recordedArraySem.notifyAll();
             }
-            double NewToneFrequency = calculateFFT(NewTone);
-            Log.d("d", String.valueOf(NewToneFrequency));
+            try {
+                timer.start();
+                timeOut = true;
+                while (timeOut) {
+                    double NewToneFrequency = calculateFFT(NewTone);
+                    Log.d("d", String.valueOf(NewToneFrequency));
 
-            if ((NewToneFrequency > 17600) && (NewToneFrequency < 19200)) {
-                Log.d("Debug ", "Note in our range");
-                Log.d("Debug ", String.valueOf(NewToneFrequency));
-                this.isIdle = false;
-            } else {
-                this.isIdle = true;
-                Log.d("Debug ", "Note out of our range");
-                Log.d("Debug ", String.valueOf(NewToneFrequency));
-            }
-            if (!bIsListeningStarted && !msgReceived) {
-                if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) { //If we hear 'F'
-                    Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
-                    bIsListeningStarted = true;
-                    Log.d("Debug ", "listening Started");
-                    //                   Log.d("Debug ", String.valueOf(NewToneFrequency));
-                    cFrequencyConverter = new FrequencyConverter();
-                    cFrequencyConverter.calculateBits(NewToneFrequency);
-                    msgReceived = true;
-                }
-            } else { // bIsListeningStarted = true
-                if ((NewToneFrequency > 17600) && (NewToneFrequency < 19200)) {
-                    Log.d("Debug 3 new", String.valueOf(NewToneFrequency));
-
-                    int s = cFrequencyConverter.getSizeOfMsg();
-                    if (s >= 29) {
-                        int m = 0;
-                    }
-                    if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200) &&
-                            (cFrequencyConverter.getSizeOfMsg() <= 4)) {
-                        Log.d("Restart!", String.valueOf(cFrequencyConverter.getSizeOfMsg()));
-                        Log.d("Debug 2 new AGAIN", String.valueOf(NewToneFrequency));
-                        Log.d("Debug ", "listening Started");
-                        //                       Log.d("Debug ", String.valueOf(NewToneFrequency));
-                        cFrequencyConverter.clearArrays();
-                        cFrequencyConverter.calculateBits(NewToneFrequency);
-                        msgReceived = true;
-                    } else if (cFrequencyConverter.getSizeOfMsg() >= 27) {
-                        Log.d("Debug ", "listening End");
+                    if ((NewToneFrequency > 17600) && (NewToneFrequency < 19200)) {
+                        Log.d("Debug ", "Note in our range");
                         Log.d("Debug ", String.valueOf(NewToneFrequency));
-                        StopRecord();
+                        this.isIdle = false;
                     } else {
-                        cFrequencyConverter.calculateBits(NewToneFrequency);
+                        this.isIdle = true;
+                        Log.d("Debug ", "Note out of our range");
+                        Log.d("Debug ", String.valueOf(NewToneFrequency));
                     }
-                    // }
+                    if (!bIsListeningStarted && !msgReceived) {
+                        if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) { //If we hear 'F'
+                            Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
+                            bIsListeningStarted = true;
+                            Log.d("Debug ", "listening Started");
+                            //                   Log.d("Debug ", String.valueOf(NewToneFrequency));
+                            cFrequencyConverter = new FrequencyConverter();
+                            cFrequencyConverter.calculateBits(NewToneFrequency);
+                            msgReceived = true;
+                        }
+                    } else { // bIsListeningStarted = true
+                        if ((NewToneFrequency > 17600) && (NewToneFrequency < 19200)) {
+                            Log.d("Debug 3 new", String.valueOf(NewToneFrequency));
+
+                            int s = cFrequencyConverter.getSizeOfMsg();
+                            if (s >= 29) {
+                                int m = 0;
+                            }
+                            if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200) &&
+                                    (cFrequencyConverter.getSizeOfMsg() <= 4)) {
+                                Log.d("Restart!", String.valueOf(cFrequencyConverter.getSizeOfMsg()));
+                                Log.d("Debug 2 new AGAIN", String.valueOf(NewToneFrequency));
+                                Log.d("Debug ", "listening Started");
+                                //                       Log.d("Debug ", String.valueOf(NewToneFrequency));
+                                cFrequencyConverter.clearArrays();
+                                cFrequencyConverter.calculateBits(NewToneFrequency);
+                                msgReceived = true;
+                            } else if (cFrequencyConverter.getSizeOfMsg() >= 27) {
+                                Log.d("Debug ", "listening End");
+                                Log.d("Debug ", String.valueOf(NewToneFrequency));
+                                StopRecord();
+                            } else {
+                                cFrequencyConverter.calculateBits(NewToneFrequency);
+                            }
+                            // }
+                        }
+                        //              else
+                        //                   StopRecord();
+                    }
                 }
-                //              else
-                //                   StopRecord();
+                timer.join();
+            } catch (InterruptedException | IllegalThreadStateException e) {
+                e.printStackTrace();
+                break;
             }
         }
         ArrayList<String> data = cFrequencyConverter.getMsgArrayNoChecksum();
@@ -250,17 +274,13 @@ public class Receiver implements CallBack{
     public boolean receiveError() throws UnsupportedEncodingException, InterruptedException {
         Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND + THREAD_PRIORITY_MORE_FAVORABLE);
 
-        //ArrayList<String> Msg = new ArrayList();
         FrequencyConverter cFrequencyConverter = new FrequencyConverter();
-        FrequencyConverter nFrequencyConverter = new FrequencyConverter();
         this.Padding = cFrequencyConverter.getPadding();
 
         recordedArray = new ArrayList<byte[]>();
         cRecorder = new Recorder();
         cRecorder.setCallback(this);
         cRecorder.start();
-        boolean bIsListeningStarted = false;
-        int countOutOfRangeTone = 0;
         bIsRecording = true;
 
         ArrayList<String> errorMsg = new ArrayList<String>();
@@ -311,22 +331,10 @@ public class Receiver implements CallBack{
                         if(cFrequencyConverter.getSizeOfMsg()>=3){
                             Log.d("Debug ", "Error listening End");
                             errorTimeOut = false;
-                            errorTime.stop();
+                            errorTime.interrupt();
                             StopRecord();
                         }
                     }
-              /*  else{
-                    Log.d("Debug ", "Not Error Tone");
-                    countOutOfRangeTone++;
-                    nFrequencyConverter.calculateBits(NewToneFrequency);
-
-                    if(nFrequencyConverter.getSizeOfMsg() >=3 || countOutOfRangeTone >=3){
-                        Log.d("Debug ", "No Error Msg");
-                        StopRecord();
-                    }
-                }
-
-               */
                 }
                 errorTime.join();
             }catch (InterruptedException | IllegalThreadStateException e) {
@@ -337,41 +345,13 @@ public class Receiver implements CallBack{
 
             ReceivedMsg = cFrequencyConverter.getMsgArray();
         this.errorMsgAccured = ReceivedMsg.equals(errorMsg);
-        //StopRecord();
             return this.errorMsgAccured;
         }
-
-  /*  public boolean checkIsIdle() throws UnsupportedEncodingException {
-        Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND + THREAD_PRIORITY_MORE_FAVORABLE);
-
-        byte[] NewTone;
-        recordedArray = new ArrayList<byte[]>();
-        synchronized (recordedArraySem) {
-            while (recordedArray.isEmpty()) {
-                try {
-                    recordedArraySem.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            NewTone = recordedArray.remove(0);
-            recordedArraySem.notifyAll();
-        }
-        double NewToneFrequency = calculateFFT(NewTone);
-
-        Log.d("Debug 2 new", String.valueOf(NewToneFrequency));
-        if ((NewToneFrequency > 17600) && (NewToneFrequency < 19200)) {
-                Log.d("Debug ", "Note in our range");
-                Log.d("Debug ", String.valueOf(NewToneFrequency));
-                this.isIdle = false;
-            }
-        else this.isIdle = true;
-        return this.isIdle;
-    }
-*/
         public boolean getIsIdle(){ return this.isIdle; }
 
         public void setIsIdle(boolean val){this.isIdle = val;}
 
         public boolean getErrorMsg(){ return this.errorMsgAccured; }
 }
+
+
