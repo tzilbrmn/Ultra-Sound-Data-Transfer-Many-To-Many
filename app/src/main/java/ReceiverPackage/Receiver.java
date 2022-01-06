@@ -142,7 +142,7 @@ public class Receiver implements CallBack{
                                 cFrequencyConverter.clearArrays();
                                 cFrequencyConverter.calculateBits(NewToneFrequency);
                                 msgReceived = true;
-                            } else if (cFrequencyConverter.getSizeOfMsg() >= 27) {
+                            } else if (cFrequencyConverter.getSizeOfMsg() >= 14) {
                                 Log.d("Debug ", "listening End");
                                 Log.d("Debug ", String.valueOf(NewToneFrequency));
                                 StopRecord();

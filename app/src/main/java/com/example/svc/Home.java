@@ -141,6 +141,8 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case 1: {
+
+                //????????????????????
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 &&
                         grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -159,6 +161,10 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
                                 if (subsInfo != null) {
                                   //  id  = subsInfo.getIccId();
                                     id = subsInfo.getNumber();
+                                    Log.d("debug phone number", "phone number" + id);
+                                    id = id.substring(4);
+
+                                    Log.d("debug phone number", "updated phone number" + id);
                                 }
                             }
                         }
@@ -177,9 +183,32 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
 //        cSender.setUserId(id);
         //Sign up to the cloud???
         txtShowInfo.setText("in signUp");
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
+
+        SubscriptionManager subsManager = (SubscriptionManager) this.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+            List<SubscriptionInfo> subsList = subsManager.getActiveSubscriptionInfoList();
+
+            if (subsList != null) {
+                for (SubscriptionInfo subsInfo : subsList) {
+                    if (subsInfo != null) {
+                        //  id  = subsInfo.getIccId();
+                        id = subsInfo.getNumber();
+                        Log.d("debug phone number", "phone number" + id);
+                        id = id.substring(4);
+
+                        Log.d("debug phone number", "updated phone number" + id);
+                    }
+                }
+            }
+        }
+
 
         userVisitCards = Encounter.getUserVisitCards(db);
-        addVC.ReceiveVC(id); //The call to start the process of transmitting and receiving the frames.
+        id = "0" + id;
+        addVC.ReceiveVC(id); //The call to start the process of transmitting and receiving the frames.???????
         try {
             int lastIndex = userVisitCards.size() - 1;
 

@@ -61,7 +61,7 @@ public class CommunicationNetwork extends Thread {
             checksum = "0" + checksum;
         frame += checksum;
 
-        if (frame.length() == 27) {
+        if (frame.length() == 14) {
             frame = Utils.utils.strToBinary(frame);
             Log.d("Debug ", "composeFrame Succeeded");
             Log.d("Debug ", frame);
@@ -140,20 +140,6 @@ public class CommunicationNetwork extends Thread {
                 Log.d("Debug ", "is idle = false");
             else Log.d("Debug ", "is idle = true");
 
-           /* Thread timer = new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(timeToWait);
-                        canListen = false;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-            timer.start();
-*/
-           // while (canListen) {
                 Log.d("Debug ", "Start listening");
                 addEncounter.Listen(timeToWait);
           //  }
