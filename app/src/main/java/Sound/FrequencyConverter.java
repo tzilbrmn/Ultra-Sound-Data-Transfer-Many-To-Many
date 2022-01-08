@@ -204,17 +204,15 @@ public class FrequencyConverter {
      **********************************************************************************************/
     public void calculateBits(double frequency) {  /* compiled code */
     int frequencyInt = (int) Math.round(frequency);
-        Log.d("we got = ", String.valueOf(frequencyInt));
         if(frequencyInt > 17600 && frequencyInt < 19200)
         {
             String charReceived = Utils.utils.binaryToText(frequenciesToFourBit.get(new Integer(frequencyInt)));
             charReceived = Integer.toHexString(Integer.valueOf(charReceived));
-            Log.d("The char:", charReceived);
             MsgArray.add(charReceived);
-            if (MsgArray.size() <= 25 && !charReceived.equals("f")) {
+            if (MsgArray.size() <= 12 && !charReceived.equals("f")) {
                 MsgArrayNoChecksum.add(charReceived);
             }
-            if (MsgArray.size() > 25 && MsgArray.size() < 28)
+            if (MsgArray.size() > 12 && MsgArray.size() < 16)
             {
                 MsgArrayChecksum.add(charReceived);
             }

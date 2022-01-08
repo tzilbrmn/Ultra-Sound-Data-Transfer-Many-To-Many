@@ -6,11 +6,14 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 import ReceiverPackage.Receiver;
 import ReceiverPackage.Recorder;
+import SenderPackage.Sender;
 import Utils.NumbersGenerator;
+import models.Encounter;
 import models.SVCDB;
 
 public class CommunicationNetwork extends Thread {
@@ -18,8 +21,7 @@ public class CommunicationNetwork extends Thread {
     Recorder recorder;
     Receiver reciever;
     NumbersGenerator numGen;
-    AddVC addEncounter;
-    ViewVisitCard ViewVisitCard;
+    SVCDB db;
     long MBWP, RBWP;
 
     Semaphore sem;
@@ -31,13 +33,12 @@ public class CommunicationNetwork extends Thread {
     boolean succedded = false;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public CommunicationNetwork(String threadName,ViewVisitCard vvc, Receiver receiver, Recorder rec, AddVC addVc) {
+    public CommunicationNetwork(String threadName, Receiver receiver, Recorder rec, SVCDB db) {
         super(threadName);
         this.threadName = threadName;
-        this.addEncounter = addVc;
-        this.ViewVisitCard = vvc;
         this.reciever = receiver;
         this.recorder = rec;
+        this.db = db;
 
         this.numGen = new NumbersGenerator();
         MBWP = numGen.calculateMBWP();
@@ -99,7 +100,7 @@ public class CommunicationNetwork extends Thread {
     public void startProcess() throws InterruptedException {
         Log.d("Debug ", "startProcess");
 
-        CommunicationNetwork listeningThread = new CommunicationNetwork("Listen", this.ViewVisitCard, this.reciever, this.recorder, this.addEncounter);
+        CommunicationNetwork listeningThread = new CommunicationNetwork("Listen", this.reciever, this.recorder, db);
         listeningThread.setFrame(this.frame);
 
         listeningThread.start();
@@ -159,7 +160,7 @@ public class CommunicationNetwork extends Thread {
 
             while (canListen) {
                 Log.d("Debug ", "Start listening");
-                addEncounter.Listen();
+                Listen();
             }
             timer.join();
             return false;
@@ -170,7 +171,7 @@ public class CommunicationNetwork extends Thread {
                 receivedError = true;
                 while (receivedError) {
                     Log.d("Debug ", "Start transmitting");
-                    ViewVisitCard.Send(frame);
+                    Send(frame);
 
                     Thread getErrorMsg = new Thread() {
                         @Override
@@ -200,6 +201,33 @@ public class CommunicationNetwork extends Thread {
         }
 
     }
+
+    public void Send(String binaryRep){
+        Log.d("debug", "Send on ViewVisitCard");
+
+        if (!binaryRep.isEmpty() && !binaryRep.equals("")) {
+            Sender cSender = new Sender();
+            cSender.setMsg2Send(binaryRep);
+            cSender.sendMsg();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void Listen() {
+        Receiver cReceiver = new Receiver();
+        try {
+            ArrayList<String> ReceivedMsg = cReceiver.receiveMsg(this);
+            if (ReceivedMsg != null) {
+                String binaryRep = Utils.utils.concatArrayList(ReceivedMsg);
+                Encounter receivedVC = Encounter.receiveVisitCard(binaryRep);
+                Encounter.addVC(receivedVC, db);
+            }
+
+        } catch (UnsupportedEncodingException | IllegalArgumentException | IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String getFrame() { return frame; }
     public void setFrame(String newFrame) { this.frame = newFrame; }
 

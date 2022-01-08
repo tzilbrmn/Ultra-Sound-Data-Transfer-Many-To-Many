@@ -84,28 +84,6 @@ public class SVCDB extends SQLiteOpenHelper {
 
     //===============================================================================================================================================
 
-
-    //user related methods
-
-
-    /**
-     * Adds a user to the DB.
-     * @param user The user object containing the data to be added.
-     * @return success/failure of the operation.
-     */
-    //DELETE?? - Ariela (a structure for adding new entity to a table)
-    public boolean addUser(User user) throws SQLiteException{
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();//store all the data from the application and pass to the db tabel
-        contentValues.put(VC_COLUMN_ID, user.getId());
-
-        long insert_result = db.insert(VC_TABLE_NAME, null, contentValues);
-        return insert_result != -1;
-    }
-
-
-    //===============================================================================================================================================
-
     //Visit card related methods
 
     public Encounter getVC(String id) throws SQLiteException{
@@ -147,15 +125,6 @@ public class SVCDB extends SQLiteOpenHelper {
         return true;
     }
 
-    public synchronized SQLiteDatabase myGetWritableDatabase() {
- //       File dbFile = context.getDatabasePath("SVCDB.db");
- //       if (dbFile != null && !dbFile.exists()) {
-  //          int m = 0;
-  //      }
-
-        return SQLiteDatabase.openDatabase("SVCDB.db", null, SQLiteDatabase.OPEN_READWRITE);
-    }
-
     /**
      * Adds a visit card to the DB.
      * @param vc The visit card object containing the data to add.
@@ -189,7 +158,6 @@ public class SVCDB extends SQLiteOpenHelper {
 
 //table name, name of values to change, where, the new valuse.
         long update_result= db.update(VC_TABLE_NAME, contentValues,"id = ?", new String[] { vc.getId() });
-        System.out.println("HI " + update_result);
         return update_result != -1;
     }
 
@@ -228,7 +196,6 @@ public class SVCDB extends SQLiteOpenHelper {
      * Gets a list of all the visit cards owned by the given user.
      * @return The visit cards owned by the user (empty list if user owns none).
      */
-    //DELETE???- Ariela
     public ArrayList<Encounter> getUserVisitCards() throws SQLiteException{
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM encounterLog";

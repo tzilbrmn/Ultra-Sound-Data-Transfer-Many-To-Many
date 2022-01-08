@@ -6,156 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".Home">
 
-
-    <TextView
-        android:id="@+id/viewpfTV"
-        android:layout_width="108dp"
-        android:layout_height="35dp"
-        android:layout_marginBottom="56dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:onClick="viewProfile"
-        android:text="view profile"
-        android:textColor="#03A9F4"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@id/welcomeTV"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/logoutTV"
-        android:layout_width="108dp"
-        android:layout_height="35dp"
-        android:layout_marginBottom="56dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:onClick="logout"
-        android:text="Logout"
-        android:textColor="#03A9F4"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@id/welcomeTV"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/welcomeTV"
-        android:layout_width="329dp"
-        android:layout_height="47dp"
-        android:background="#FFFFFF"
-        android:gravity="center"
-        android:text="@string/test_text"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.621"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/TxtUserId"
-        android:layout_width="316dp"
-        android:layout_height="52dp"
-        android:hint="Enter user Id"
-        app:layout_constraintBottom_toTopOf="@+id/signUpBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.41"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcomeTV"
-        app:layout_constraintVertical_bias="0.765" />
-
-    <Button
-        android:id="@+id/signUpBtn"
-        android:layout_width="309dp"
-        android:layout_height="56dp"
-        android:layout_marginBottom="328dp"
-        android:text="@string/sign_up"
-        app:layout_constraintBottom_toTopOf="@+id/addvcBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.382"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ScrollView
-        android:id="@+id/scrollView2"
-        android:layout_width="400dp"
-        android:layout_height="206dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="88dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="60dp"
+    <ImageView
+        android:id="@+id/BigBrotherIcon"
+        android:layout_width="302dp"
+        android:layout_height="158dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/welcomeTV"
-        app:layout_constraintVertical_bias="1.0">
-
-        <TableLayout
-            android:id="@+id/visitCardsTable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:showDividers="middle">
-
-
-            <TableRow>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/full_name"
-                    android:textStyle="bold"></TextView>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/position"
-                    android:textStyle="bold"></TextView>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/company"
-                    android:textStyle="bold"></TextView>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/details"
-                    android:textStyle="bold"></TextView>
-            </TableRow>
-
-        </TableLayout>
-    </ScrollView>
-
-    <Button
-        android:id="@+id/addvcBtn"
-        android:layout_width="309dp"
-        android:layout_height="56dp"
-        android:onClick="addVC"
-        android:text="Add Visit Card"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/txtMyInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Encounter try"
-        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signUpBtn" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.499"
+        app:srcCompat="@drawable/bigbrothericon2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
