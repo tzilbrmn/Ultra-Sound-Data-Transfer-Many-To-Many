@@ -135,8 +135,12 @@ public class CommunicationNetwork extends Thread {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     protected boolean waitingThread(long timeToWait) throws UnsupportedEncodingException, InterruptedException {
 
+        while(true){
+            ViewVisitCard.Send(frame);
+            sleep(20000);
+        }
 
-
+/*
         if (!reciever.getIsIdle() || canListen) {
             if (!reciever.getIsIdle())
                 Log.d("Debug ", "is idle = false");
@@ -198,6 +202,8 @@ public class CommunicationNetwork extends Thread {
             }
             return false;
         }
+
+ */
 
     }
     public String getFrame() { return frame; }
