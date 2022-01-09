@@ -3,7 +3,7 @@
 <h4>Documetation of the code can be <a href="https://mirassafadi.github.io/SVC/">here</a>.</h4>
 <h5 align="center">ERD Diagram</h5>
 <p align="center">
-  <img src="ERD.jpg" align="center">
+  <img src="ERD.PNG" align="center">
 </p>
 <p align="center">
   <img src="SVC site map.jpg" align="center">
