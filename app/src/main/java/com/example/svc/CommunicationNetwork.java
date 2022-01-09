@@ -27,11 +27,19 @@ public class CommunicationNetwork extends Thread {
     Semaphore sem;
     String threadName;
 
-    boolean canListen = false;
+    boolean canListen = true;
     private boolean errorTimeOut = false;
     private boolean receivedError = false;
     boolean succedded = false;
 
+    /**
+     * {@inheritDoc}
+     * Initialize the variables according to the received params.
+     * @param threadName {@inheritDoc}
+     * @param receiver {@inheritDoc}
+     * @param rec {@inheritDoc}
+     * @param db {@inheritDoc}
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     public CommunicationNetwork(String threadName, Receiver receiver, Recorder rec, SVCDB db) {
         super(threadName);
@@ -44,9 +52,6 @@ public class CommunicationNetwork extends Thread {
         MBWP = numGen.calculateMBWP();
         RBWP = numGen.calculateRBWP();
     }
-
-
-    final private String listeningSemaphore = "Semaphore";
 
     /**
      * Builds the frame according to the user's id
@@ -96,6 +101,10 @@ public class CommunicationNetwork extends Thread {
         return checkSum;
     }
 
+    /**
+     * {@inheritDoc}
+     * Creates a thread with the frame that will execute the network protocol and start it.
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void startProcess() throws InterruptedException {
         Log.d("Debug ", "startProcess");
@@ -110,6 +119,10 @@ public class CommunicationNetwork extends Thread {
 
 
 
+    /**
+     * {@inheritDoc}
+     * Wait the waiting periods according to the protocol.
+     */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void run() {
@@ -121,7 +134,6 @@ public class CommunicationNetwork extends Thread {
 
                 reciever.setIsIdle(true);
                 this.succedded = false;
-                //sem.acquire();
                 if (!waitingThread(MBWP))
                     waitingThread(RBWP);
                 do {
@@ -133,17 +145,18 @@ public class CommunicationNetwork extends Thread {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * Check if the channel is Idle.
+     * Send the frame and wait for error.
+     * @param timeToWait
+     */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     protected boolean waitingThread(long timeToWait) throws UnsupportedEncodingException, InterruptedException {
-
-
-
         if (!reciever.getIsIdle() || canListen) {
             if (!reciever.getIsIdle())
                 Log.d("Debug ", "is idle = false");
             else Log.d("Debug ", "is idle = true");
-
-
 
             Thread timer = new Thread() {
                 @Override
@@ -202,8 +215,12 @@ public class CommunicationNetwork extends Thread {
 
     }
 
+    /**
+     * {@inheritDoc}
+     * Call to send the frame.
+     * @param binaryRep
+     */
     public void Send(String binaryRep){
-        Log.d("debug", "Send on ViewVisitCard");
 
         if (!binaryRep.isEmpty() && !binaryRep.equals("")) {
             Sender cSender = new Sender();
@@ -212,6 +229,10 @@ public class CommunicationNetwork extends Thread {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * Listen to the channel, and add to the DB the received msg
+     */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void Listen() {
         Receiver cReceiver = new Receiver();
@@ -230,9 +251,5 @@ public class CommunicationNetwork extends Thread {
 
     public String getFrame() { return frame; }
     public void setFrame(String newFrame) { this.frame = newFrame; }
-
-    public boolean isCanListen() {
-        return canListen;
-    }
 }
 

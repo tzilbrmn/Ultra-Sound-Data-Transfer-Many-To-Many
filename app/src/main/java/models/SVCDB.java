@@ -25,10 +25,7 @@ public class SVCDB extends SQLiteOpenHelper {
 
     private Context context;
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "SVCDB.db"; //Change later - Ariela
-
-    //Constants for the VisitCard table
-    //TAL - decide what to do
+    private static final String DATABASE_NAME = "SVCDB.db";
 
     private static final String VC_TABLE_NAME = "encounterLog";
     private static final String VC_COLUMN_ENCOUNTER_ID = "encounterId";
@@ -166,11 +163,6 @@ public class SVCDB extends SQLiteOpenHelper {
      * @param id The id field of the visit card to delete.
      * @return success/failure of the operation.
      */
-    /*
-     * deletes a visit card.
-     * @param id The id of the visit card to delete
-     * @return success/failure of the operation.
-     */
     public boolean deleteVC(String id) throws SQLiteException{
         SQLiteDatabase db = this.getWritableDatabase();
         long delete_result= db.delete(VC_TABLE_NAME,"id = ? ", new String[Integer.parseInt(id)]);
@@ -179,11 +171,6 @@ public class SVCDB extends SQLiteOpenHelper {
 
     /**
      * deletes a visit card.
-     * @return success/failure of the operation.
-     */
-    /*
-     * deletes a visit card.
-     * @param id The id of the visit card to delete
      * @return success/failure of the operation.
      */
     public void dropTable() throws SQLiteException{

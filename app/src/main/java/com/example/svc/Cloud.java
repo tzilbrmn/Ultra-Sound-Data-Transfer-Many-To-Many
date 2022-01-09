@@ -1,21 +1,21 @@
 package com.example.svc;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.Locale;
 
 import models.Encounter;
 import models.SVCDB;
@@ -25,36 +25,55 @@ public class Cloud {
     FirebaseDatabase database;
     DatabaseReference myRef;
 
+    Thread uploadTime;
+
     SVCDB db;
     Context context;
     String id;
     String key;
-    File dir;
-    File gpxfile;
 
-    public Cloud (SVCDB db, Context context, String id)
-    {
+
+    public Cloud (SVCDB db, Context context, String id) throws InterruptedException {
         this.db = db;
         this.context = context;
         this.id = id;
 
         database= FirebaseDatabase.getInstance("https://big-brother-ultra-sound-default-rtdb.europe-west1.firebasedatabase.app/");
         myRef = database.getReference("big-brother-ultra-sound-default-rtdb").child("users");
+
         addUserToFirebase();
+
+        this.uploadTime = new Thread() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void run() {
+                try {
+                    Log.d("Debug ", "Wait to upload");
+                    setPriority(Thread.MIN_PRIORITY);
+                    long sleepTime = 14 * 24 * 60 * 60000;
+                    while (true) {
+                        Thread.sleep(sleepTime);
+                        upload();
+                    }
+                } catch (InterruptedException | ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
     }
 
-    protected void addUserToFirebase() {
-        key = myRef.push().getKey();
-        myRef.child(key).setValue(id);
+    protected void addUserToFirebase() throws InterruptedException {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            key = myRef.push().getKey();
+            myRef.child(key).setValue(id);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     protected void upload() throws ParseException {
-        //For debug
-        ArrayList<Encounter> finalList = new ArrayList<Encounter>();
-        Encounter enc = new Encounter(id).setEncounterDate("2022-01-05").setEncounterTime("18:00:00");
-        finalList.add(enc);
-        myRef.child(key).child(id).setValue(generateListToUpload(/*db.getUserVisitCards()*/ finalList));
+        myRef.child(key).child(id).setValue(generateListToUpload(db.getUserVisitCards()));
     }
 
     protected ArrayList<Encounter> generateListToUpload(ArrayList<Encounter> encList) throws ParseException {

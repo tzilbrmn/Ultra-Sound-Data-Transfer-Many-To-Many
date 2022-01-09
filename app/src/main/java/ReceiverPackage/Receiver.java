@@ -290,7 +290,6 @@ public class Receiver implements CallBack{
                 cFrequencyConverter.clearArrays();
                 while(errorTimeOut){
                     double NewToneFrequency = calculateFFT(NewTone);
-                    Log.d("d error", String.valueOf(NewToneFrequency));
 
                     if ((NewToneFrequency > 19100) && (NewToneFrequency < 19200)) {
                         cFrequencyConverter.calculateBits(NewToneFrequency);

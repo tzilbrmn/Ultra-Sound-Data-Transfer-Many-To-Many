@@ -4,6 +4,9 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SubscriptionInfo;
@@ -13,6 +16,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,22 +36,19 @@ import models.SVCDB;
 public class Home extends AppCompatActivity {
     /**
      * Instance variables:
-     * userVisitCards - all the visit cards the user owns.
      * db - an instance of the SQLite Helper class.
-     * user - The currently logged in user.
-     * visitCardsTable - the table element to view the visit cards in.
+     * communicationNetwork - an instance of the communication network class.
+     * id - the id of the user.
      */
-    private ArrayList<Encounter> userVisitCards;
     private SVCDB db;
-    Sender cSender;
-    TextView txtShowInfo;
+    Cloud cloud;
     CommunicationNetwork communicationNetwork;
     String id = "9999999999999";
 
     /**
      * {@inheritDoc}
-     * Initializes the db instance, gets the currently logged in user from the intent <i>Extra</i> dictionary.
-     * gets the visit cards owned by the currently logged in user and populates the table.
+     * Asks for the needed permissions.
+     * initializes the db and communication network and xalls the sign up function.
      * @param savedInstanceState {@inheritDoc}
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -56,7 +57,10 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ImageView iv = (ImageView)findViewById(R.id.BigBrotherIcon);
-        iv.setImageResource(R.drawable.bigbrothericon2);
+
+        Resources resources = this.getResources();
+        final int resourceId = resources.getIdentifier("bigbrothericon", "drawable", this.getPackageName());
+        iv.setImageResource(resourceId);
 
         //get permissions from the user at startup..
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
@@ -68,6 +72,7 @@ public class Home extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
         }
+
 
 
         db = new SVCDB(this);
@@ -87,6 +92,12 @@ public class Home extends AppCompatActivity {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * Checks the needed permissions.
+     * Gets the id from the user's SIM card.
+     * Initializes the cloud and cloud timer, and calls to start the communication process.
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void signUp() throws InterruptedException {
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -101,6 +112,11 @@ public class Home extends AppCompatActivity {
                         String tmp = subsInfo.getNumber();
                         if (!tmp.equals(""))
                             id = tmp;
+                        else {
+                            String msg = "Couldn't get SIM information.\n Sadly, you're SIM card is not sutable for this application.";
+                            Toast toast = Toast.makeText(this, msg, Toast.LENGTH_LONG);
+                            toast.show();
+                        }
                         Log.d("debug phone number", "phone number " + id);
                         id = id.substring(4);
 
@@ -110,28 +126,11 @@ public class Home extends AppCompatActivity {
             }
         }
 
-
-        userVisitCards = Encounter.getUserVisitCards(db);
         id = "0" + id;
         communicationNetwork.composeFrame(id);
+        this.cloud = new Cloud(db, this, id);
+        cloud.uploadTime.start();
         communicationNetwork.startProcess();
-        try {
-            int lastIndex = userVisitCards.size() - 1;
-
-        if (lastIndex > 0) {
-            txtShowInfo.setText("Info from DB: id- " + userVisitCards.get(lastIndex).getId() + " start date- " + userVisitCards.get(lastIndex).getEncounterStartDate() + " start time- " + userVisitCards.get(lastIndex).getEncounterStartTime());
-
-
-            int i = 0;
-            while (i < 100) {
-                userVisitCards = Encounter.getUserVisitCards(db);
-                lastIndex = userVisitCards.size() - 1;
-                txtShowInfo.setText("Info from DB: id- " + userVisitCards.get(lastIndex).getId() + " start date- " + userVisitCards.get(lastIndex).getEncounterStartDate() + " start time- " + userVisitCards.get(lastIndex).getEncounterStartTime());
-                i++;
-            }
-
-        }
-        }
-        catch (Exception e) {}
+        cloud.uploadTime.join();
     }
 }

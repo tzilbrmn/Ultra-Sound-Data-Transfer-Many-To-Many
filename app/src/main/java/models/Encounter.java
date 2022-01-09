@@ -14,7 +14,7 @@ import java.util.*;
 import Utils.utils;
 
 /**
- * This class encapsulates the visit card data in an object.
+ * This class encapsulates the encounter data in an object.
  */
 public class Encounter {
     private String id;
@@ -27,6 +27,11 @@ public class Encounter {
 
     }
 
+    /**
+     * {@inheritDoc}
+     * Initializes the encounter with the received id and current time.
+     * @param id
+     */
     public Encounter(String id){
         this.id = id;
 
@@ -114,7 +119,6 @@ public class Encounter {
      *
      * @return A string representation of this object.
      */
-    //Add end date and time? -Ariela
     @Override
     public String toString() {
         return String.format("%s;%s;%s",this.id,this.encounterStartDate, this.encounterStartTime);
@@ -136,25 +140,9 @@ public class Encounter {
     }
 
     /**
-     * Deletes a visit card from the DB.
-     * @param id The id of the visit card to delete
-     * @param db The DB instance.
-     * @return success/failure of the operation
-     */
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static boolean deleteVC (String id, SVCDB db){
-        try{
-            return db.deleteVC(id);
-        } catch (SQLiteException e){
-            return false;
-        }
-
-    }
-
-    /**
-     * gets the list of visit cards owned by the user.
+     * gets the list of encounters of the user.
      * @param db The DB instance
-     * @return A list of visit cards (empty if user owns none).
+     * @return A list of encounters (empty if user had none).
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static ArrayList<Encounter> getUserVisitCards(SVCDB db){
@@ -167,7 +155,7 @@ public class Encounter {
     }
 
     /**
-     * Adds a visit card to the DB.
+     * Adds an encounter to the DB.
      * @param en The encounter to add.
      * @param db The DB instance.
      * @return success/failure of the operation
@@ -175,9 +163,6 @@ public class Encounter {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static boolean addVC (Encounter en, SVCDB db){
 
-        //Change time from String to time format- Ariela !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
-        //do input validation!!
-        //get the vc from the database
         SimpleDateFormat dateAndTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
         try{
