@@ -5,9 +5,10 @@
 <p align="center">
   <img src="ERD.PNG" align="center">
 </p>
-<p align="center">
-  <img src="SVC site map.jpg" align="center">
-</p>
-<p align="center">
-  <img src="./Screenshots of the app/Flow.JPG" align="center">
-</p>
+
+
+Android based application implementing communication network using ultrasound waves.
+Run the application using andriod studio.
+A link to a video demonstrating the run of the application: https://youtu.be/yBVn1yQCX4c
+
+Thank you :)
