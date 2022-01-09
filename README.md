@@ -1,4 +1,4 @@
-# SVC - Smar Visit Card
+# Ultra Sound Data Transfer Many-to-Many
 <h3 align="center">Software Engineering final project</h3>
 <h4>Documetation of the code can be <a href="https://mirassafadi.github.io/SVC/">here</a>.</h4>
 <h5 align="center">ERD Diagram</h5>
