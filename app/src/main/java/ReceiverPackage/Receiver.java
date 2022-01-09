@@ -133,8 +133,6 @@ public class Receiver implements CallBack{
 
         String chksum = calcChecksum(dataString);
         if (msgReceived) {
-            ArrayList<String> chksm = new ArrayList<String>(Arrays.asList(chksum));
-            cFrequencyConverter.setMsgArrayChecksum(chksm);
             Log.d("Checksum Received ", cFrequencyConverter.getMsgChecksum());
             Log.d("Checksum Calculated ", chksum);
             Log.d("Frame data ", Utils.utils.concatArrayList(cFrequencyConverter.getMsgArrayNoChecksum()));
